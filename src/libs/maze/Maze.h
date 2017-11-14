@@ -5,6 +5,7 @@
 #ifndef _MAZE_H_
 #define _MAZE_H_
 
+#include "UnionFind.h"
 #include <stbool.h>
 #include <stdio.h>
 
