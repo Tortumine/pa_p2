@@ -6,6 +6,7 @@ struct union_find_t {
     size_t parrents[];
     size_t rank[];
     size_t n_items;
+    size_t n_trees;
 };
 
 /* ------------------------------------------------------------------------- *
@@ -30,6 +31,7 @@ UnionFind* ufCreate(size_t n_items)
     tmp->parrents = malloc(n_items * sizeof(size_t));
     tmp->rank = malloc(n_items * sizeof(size_t));
     tmp->n_items = n_items;
+    tmp->n_trees = n_items;
 
     //Inisializing
     for(int i = 0; i<n_items; i++)
@@ -89,6 +91,7 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
                 union_find.rank[root1]++;
             }
         }
+        union_find.n_trees--;
         return UF_MERGED;
     }
     return UF_SAME;
@@ -127,5 +130,5 @@ size_t ufFind(const UnionFind* union_find, size_t item)
  * ------------------------------------------------------------------------- */
 size_t ufComponentsCount(const UnionFind* union_find)
 {
-    return union_find.n_items;
+    return union_find.n_trees;
 }
