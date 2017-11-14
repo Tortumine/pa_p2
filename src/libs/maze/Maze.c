@@ -17,7 +17,7 @@ typedef struct maze_t Maze;
 
 Maze* mzCreate(size_t size)
 {
-    int innerWalls;
+    int innerWalls;//le nombre de murs intérieurs.
     struct Maze *myMaze;
     //set up the struct UnionFind
     myMaze->(*UnionFind) = ufCreate(size*size);
@@ -30,7 +30,7 @@ Maze* mzCreate(size_t size)
     //Horizontal walls are a the end of the arrey
     int setVerWalls = 0;
     int setHorWalls = 0;
-    for(int i=0;i<(size*size)-1;i++)
+    for(int i=0;i<(size*size);i++)
         {
             if(i%size < size-1)//set a wall between a cell and it's right neighbour
             {           
@@ -76,5 +76,5 @@ Maze* mzCreate(size_t size)
                }
                wallsToTest++;
     }
-    mzPrint(&myMaze, out);
+    return &myMaze;
 }
