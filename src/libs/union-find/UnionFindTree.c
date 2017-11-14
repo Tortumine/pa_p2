@@ -2,15 +2,11 @@
 #include <stdio.h>
 
 struct union_find_t {
-    Item *lab[];
-    Item tree_array[];
+    size_t items[];
+    size_t parrents[];
+    size_t rank[];
+    size_t n_items;
 };
-
-typedef struct item {
-    item* parent;
-    size_t element;
-    size_t rank;
-} Item;
 
 /* ------------------------------------------------------------------------- *
  * Build a union find structure for $n_items$ items (initially each in their
@@ -29,23 +25,20 @@ typedef struct item {
 UnionFind* ufCreate(size_t n_items)
 {
     // Memory allocation
-    UnionFind* union_find_ptr = malloc(sizeof(UnionFind));
-    Item *item_array = malloc(n_items * sizeof(Item));
-    Item *lab_item_ptr[]= malloc(n_items * sizeof(Item*));
+    UnionFind* tmp = malloc(sizeof(UnionFind));
+    tmp->items = malloc(n_items * sizeof(size_t));
+    tmp->parrents = malloc(n_items * sizeof(size_t));
+    tmp->rank = malloc(n_items * sizeof(size_t));
+    tmp->n_items = n_items;
 
-    //Structures initializing
-    for(size_t i = 0;i < n_items;i++)
-    {   
-        item_array[i].element = i;
-        item_array[i].parent = NULL;
-        item_array[i].rank = 0;
-
-        lab_item_ptr[i] = &item_array[i];
+    //Inisializing
+    for(int i = 0; i<n_items; i++)
+    {
+        tmp.items[i]=i;
+        tmp.parrents[i]=i;
+        tmp.rank[i]=0;
     }
-    //return structure ptr copy
-    union_find_ptr.lab = lab_item_ptr;
-    union_find_ptr.tree_array = lab_item_ptr;
-    return union_find_ptr;
+    return tmp;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -56,8 +49,9 @@ UnionFind* ufCreate(size_t n_items)
  * ------------------------------------------------------------------------- */
 void ufFree(UnionFind* union_find)
 {
-    free(union_find.tree_array);
-    free(union_find.lab);
+    free(union_find.items;);
+    free(union_find.parrents);
+    free(union_find.rank);
     free(union_find);
 }
 
@@ -78,8 +72,26 @@ void ufFree(UnionFind* union_find)
  * ------------------------------------------------------------------------- */
 ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 {
-    //For maximize the speed , the better way is to 
-    //merge on the root of the tree
+    size_t root1 = ufFind(union_find,item1);
+    size_t root2 = ufFind(union_find,item2);
+
+    if(root1 != root2)
+    {
+        if(union_find.rank[root1] < union_find.rank[root2])
+        {
+            union_find.parent[root1] = root2;
+        }
+        else
+        {
+            union_find.parent[root2] = root1;
+            if(union_find.rank[root1] == union_find.rank[root2])
+            {
+                union_find.rank[root1]++;
+            }
+        }
+        return UF_MERGED;
+    }
+    return UF_SAME;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -97,29 +109,11 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
   * ------------------------------------------------------------------------- */
 size_t ufFind(const UnionFind* union_find, size_t item)
 {
-    if(union_find.lab[item].parent == NULL)
+    if(union_find.parent[item]!=item)
     {
-        return union_find.lab[item].element;
-    }        
-    return(ufFindBis(union_find.lab[item].parrent));
-}
-
-/* ------------------------------------------------------------------------- *
- * Search for the component of an item.
- *
- * PARAMETERS
- * item_ptr     Pointer to the item for which the component should be searched
- *
- * RETURN
- * component    the index of the component where $item$ belongs
-  * ------------------------------------------------------------------------- */
-size_t ufFindBis(item* item_ptr)
-{
-    if(item_ptr.parrent == NULL)
-        {
-            return item_ptr.element;
-        }
-    return(ufFindBis(item_ptr.parrent));
+        union_find.parent[item]=ufFind(union_find,union_find.parent[item]);
+    }
+    return union_find.parent[item];
 }
 
 /* ------------------------------------------------------------------------- *
@@ -131,4 +125,7 @@ size_t ufFindBis(item* item_ptr)
  * RETURN
  * count        The number of components
  * ------------------------------------------------------------------------- */
-size_t ufComponentsCount(const UnionFind* union_find);
+size_t ufComponentsCount(const UnionFind* union_find)
+{
+    return union_find.n_items;
+}
