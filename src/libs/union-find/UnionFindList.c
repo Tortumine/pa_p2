@@ -81,3 +81,7 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
          return UF_MERGED;
     }
 }
+size_t ufComponentsCount(const UnionFind* union_find)
+{
+    
+}
