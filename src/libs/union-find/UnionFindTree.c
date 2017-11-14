@@ -2,19 +2,14 @@
 #include <stdio.h>
 
 struct union_find_t {
-    Sentinel* s_array;
-    Item* i_array;
+    Item *lab[];
+    Item tree_array[];
 };
 
-typedef struct sentinel {
-    UnionFind* head;
-    UnionFind* tail;
-} Sentinel;
-
 typedef struct item {
-    Sentinel* parent_sentinel;
-    UnionFind* previus;
-    size_t item;
+    item* parent;
+    size_t element;
+    size_t rank;
 } Item;
 
 /* ------------------------------------------------------------------------- *
@@ -33,19 +28,24 @@ typedef struct item {
  * ------------------------------------------------------------------------- */
 UnionFind* ufCreate(size_t n_items)
 {
-    UnionFind* uf_ptr = malloc(sizeof(UnionFind));
-    Item *i_array = malloc(n_items * sizeof(Item));
-    Sentinel *s_array = malloc(n_items * sizeof(Sentinel));
+    // Memory allocation
+    UnionFind* union_find_ptr = malloc(sizeof(UnionFind));
+    Item *item_array = malloc(n_items * sizeof(Item));
+    Item *lab_item_ptr[]= malloc(n_items * sizeof(Item*));
+
+    //Structures initializing
     for(size_t i = 0;i < n_items;i++)
-    {
-        i_array[i].item=i;
-        i_array[i].previus=NULL;
-        i_array[i].parent_sentinel=&s_array[i];  
-        
-        s_array[i].head = &i_array[i];
-        s_array[i].tail = &i_array[i];
+    {   
+        item_array[i].element = i;
+        item_array[i].parent = NULL;
+        item_array[i].rank = 0;
+
+        lab_item_ptr[i] = &item_array[i];
     }
-    return uf_ptr;
+    //return structure ptr copy
+    union_find_ptr.lab = lab_item_ptr;
+    union_find_ptr.tree_array = lab_item_ptr;
+    return union_find_ptr;
 }
 
 /* ------------------------------------------------------------------------- *
@@ -56,7 +56,9 @@ UnionFind* ufCreate(size_t n_items)
  * ------------------------------------------------------------------------- */
 void ufFree(UnionFind* union_find)
 {
-    
+    free(union_find.tree_array);
+    free(union_find.lab);
+    free(union_find);
 }
 
 /* ------------------------------------------------------------------------- *
@@ -74,7 +76,11 @@ void ufFree(UnionFind* union_find)
  * status       The resulting status of the merge operation; UF_SAME means
  *              the two items were already in the same component
  * ------------------------------------------------------------------------- */
-ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2);
+ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
+{
+    //For maximize the speed , the better way is to 
+    //merge on the root of the tree
+}
 
 /* ------------------------------------------------------------------------- *
  * Search for the component of an item.
@@ -89,7 +95,32 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2);
  * RETURN
  * component    the index of the component where $item$ belongs
   * ------------------------------------------------------------------------- */
-size_t ufFind(const UnionFind* union_find, size_t item);
+size_t ufFind(const UnionFind* union_find, size_t item)
+{
+    if(union_find.lab[item].parent == NULL)
+    {
+        return union_find.lab[item].element;
+    }        
+    return(ufFindBis(union_find.lab[item].parrent));
+}
+
+/* ------------------------------------------------------------------------- *
+ * Search for the component of an item.
+ *
+ * PARAMETERS
+ * item_ptr     Pointer to the item for which the component should be searched
+ *
+ * RETURN
+ * component    the index of the component where $item$ belongs
+  * ------------------------------------------------------------------------- */
+size_t ufFindBis(item* item_ptr)
+{
+    if(item_ptr.parrent == NULL)
+        {
+            return item_ptr.element;
+        }
+    return(ufFindBis(item_ptr.parrent));
+}
 
 /* ------------------------------------------------------------------------- *
  * Count the number of components.
