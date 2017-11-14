@@ -1,27 +1,32 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "UnionFind.h"
 
-typedef struct {
-    int numero;
+struct union_find_t {
+    struct Element* elements;
+    struct Sentinel* sentinels;
+};
+
+typedef struct Element {
+    size_t numero;
     struct Sentinel* head;
     struct Element* next;
 }Element;
-typedef struct {
+typedef struct Sentinel{
     struct Element* first;
     struct Element* last;
-    int numberElements;
+    size_t numberElements;
 }Sentinel;
-struct union_find_t{
-    struct Element* elements;
-    struct Sentinel* sentinels;
-}UnionFind;
 
-UnionFind* ufCreate(size_t n_items)
+
+
+UnionFind * ufCreate(size_t n_items)
 {
-    UnionFind* unionFind = NULL;
-    unionFind = malloc(sizeof(union_find_t));
-    unionFind->elements = malloc(n_items * n_items * sizeof(Element));
-    unionFind->sentinels = malloc(n_items * n_items * sizeof(Sentinel));
-    for(int i=0; i <n_items*n_items; i ++)
+    UnionFind * unionFind;
+    unionFind = malloc(sizeof(UnionFind));
+    unionFind->elements = malloc(n_items * n_items * sizeof(*unionFind->elements));
+    unionFind->sentinels = malloc(n_items * n_items * sizeof(*unionFind->sentinels));
+    for(size_t i=0; i < n_items*n_items; i ++)
     {
         unionFind->elements[i].numero = i;
         unionFind->elements[i].next = NULL;
@@ -30,14 +35,14 @@ UnionFind* ufCreate(size_t n_items)
         unionFind->sentinels[i].last = &unionFind->elements[i];
         unionFind->sentinels[i].numberElements = 1;
     }
-    return &unionFind;
+    return unionFind;
 }
 
 void ufFree(UnionFind* union_find)
 {
-    free(unionFind->sentinels);
-    free(unionFind->elements);
-    free(unionFind);
+    free(union_find->sentinels);
+    free(union_find->elements);
+    free(union_find);
 }
 
 size_t ufFind(const UnionFind* union_find, size_t item)
@@ -48,7 +53,7 @@ size_t ufFind(const UnionFind* union_find, size_t item)
 
 ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 {
-    if (ufFind(&union_find, item1) == ufFind(&union_find, item2))
+    if (ufFind(union_find, item1) == ufFind(union_find, item2))
         return UF_SAME;
     else 
     {
@@ -60,21 +65,20 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
         else
         {toConcat = item2;
          toHost = item1;}
-        union_find->elements[toHost].head->last->(*next) = union_find->elements[toConcat].head->(&first);
-        union_find->elements[toHost].head->(*last) = union_find->elements[toConcat].head->(&last);
+        union_find->elements[toHost].head->last->next = union_find->elements[toConcat].head->first;
+        union_find->elements[toHost].head->last = union_find->elements[toConcat].head->last;
         struct Element* pointToHead;
         struct Sentinel* pointToSentinel;
-        pointToHead = union_find->elements[toConcat].head.first;
+        pointToHead = union_find->elements[toConcat].head->first;
         pointToSentinel = union_find->elements[toConcat].head;
-
-       
-        for(size_t i = 0; i < union_find->elements[toConcat].head.numberElements;i++)
+     
+        for(size_t i = 0; i < union_find->elements[toConcat].head->numberElements;i++)
         {
             pointToHead->head = union_find->elements[toHost].head; 
-            if (pointToHead->next != null)
+            if (pointToHead->next != NULL)
                 pointToHead = pointToHead->next;
         }
-         union_find->elements[toHost].head.numberElements += pointToSentinel->numberElements;
+         union_find->elements[toHost].head->numberElements += pointToSentinel->numberElements;
          pointToSentinel->first = NULL;
          pointToSentinel->last = NULL; 
 
@@ -83,5 +87,6 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 }
 size_t ufComponentsCount(const UnionFind* union_find)
 {
-    
+    size_t j=0;
+    return j;
 }
