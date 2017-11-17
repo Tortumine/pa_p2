@@ -1,10 +1,11 @@
-#include "UnionFind.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "UnionFind.h"
 
 struct union_find_t {
-    size_t items[];
-    size_t parrents[];
-    size_t rank[];
+    size_t* items;
+    size_t* parrents;
+    size_t* rank;
     size_t n_items;
     size_t n_trees;
 };
@@ -27,6 +28,7 @@ UnionFind* ufCreate(size_t n_items)
 {
     // Memory allocation
     UnionFind* tmp = malloc(sizeof(UnionFind));
+
     tmp->items = malloc(n_items * sizeof(size_t));
     tmp->parrents = malloc(n_items * sizeof(size_t));
     tmp->rank = malloc(n_items * sizeof(size_t));
@@ -36,9 +38,9 @@ UnionFind* ufCreate(size_t n_items)
     //Inisializing
     for(int i = 0; i<n_items; i++)
     {
-        tmp.items[i]=i;
-        tmp.parrents[i]=i;
-        tmp.rank[i]=0;
+        tmp->items[i]=i;
+        tmp->parrents[i]=i;
+        tmp->rank[i]=0;
     }
     return tmp;
 }
@@ -51,9 +53,9 @@ UnionFind* ufCreate(size_t n_items)
  * ------------------------------------------------------------------------- */
 void ufFree(UnionFind* union_find)
 {
-    free(union_find.items;);
-    free(union_find.parrents);
-    free(union_find.rank);
+    free(union_find->items);
+    free(union_find->parrents);
+    free(union_find->rank);
     free(union_find);
 }
 
@@ -79,19 +81,19 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 
     if(root1 != root2)
     {
-        if(union_find.rank[root1] < union_find.rank[root2])
+        if(union_find->rank[root1] < union_find->rank[root2])
         {
-            union_find.parent[root1] = root2;
+            union_find->parrents[root1] = root2;
         }
         else
         {
-            union_find.parent[root2] = root1;
-            if(union_find.rank[root1] == union_find.rank[root2])
+            union_find->parrents[root2] = root1;
+            if(union_find->rank[root1] == union_find->rank[root2])
             {
-                union_find.rank[root1]++;
+                union_find->rank[root1]++;
             }
         }
-        union_find.n_trees--;
+        union_find->n_trees--;
         return UF_MERGED;
     }
     return UF_SAME;
@@ -112,11 +114,11 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
   * ------------------------------------------------------------------------- */
 size_t ufFind(const UnionFind* union_find, size_t item)
 {
-    if(union_find.parent[item]!=item)
+    if(union_find->parrents[item]!=item)
     {
-        union_find.parent[item]=ufFind(union_find,union_find.parent[item]);
+        union_find->parrents[item]=ufFind(union_find,union_find->parrents[item]);
     }
-    return union_find.parent[item];
+    return union_find->parrents[item];
 }
 
 /* ------------------------------------------------------------------------- *
@@ -130,5 +132,5 @@ size_t ufFind(const UnionFind* union_find, size_t item)
  * ------------------------------------------------------------------------- */
 size_t ufComponentsCount(const UnionFind* union_find)
 {
-    return union_find.n_trees;
+    return union_find->n_trees;
 }
