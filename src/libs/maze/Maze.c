@@ -31,9 +31,7 @@ Maze* mzCreate(size_t size)
     //myMaze->union_Find = malloc(size * size * sizeof(*myMaze->union_Find));
     
      //unionFind->elements = malloc(n_items * n_items * sizeof(*unionFind->elements));
-    
     myMaze->union_Find = ufCreate(size*size);
-
     //setting up the walls of the maze
     //number of inner walls is size*((size-1)*2)
     innerWalls = size*((size-1)*2);
@@ -49,17 +47,17 @@ Maze* mzCreate(size_t size)
             {           
             myMaze->myWalls[setVerWalls].Cell1.row=i/size;
             myMaze->myWalls[setVerWalls].Cell1.col=i%size;
-            myMaze->myWalls[setVerWalls].Cell2.row=(i+1)/size;
-            myMaze->myWalls[setVerWalls].Cell2.col=(i+i)%size;
+            myMaze->myWalls[setVerWalls].Cell2.row=i/size;
+            myMaze->myWalls[setVerWalls].Cell2.col=(i%size)+1;
             myMaze->myWalls[setVerWalls].wall_between=true;
             setVerWalls ++;
             }
             if(i/size < size-1)//set a wall between a cell and it's bottom neighbour
             {           
-            myMaze->myWalls[setVerWalls].Cell1.row=i/size;
-            myMaze->myWalls[setVerWalls].Cell1.col=i%size;
-            myMaze->myWalls[setVerWalls].Cell2.row=(i+size)/size;
-            myMaze->myWalls[setVerWalls].Cell2.col=(i+size)%size;
+            myMaze->myWalls[setHorWalls + innerWalls/2].Cell1.row=i/size;
+            myMaze->myWalls[setHorWalls + innerWalls/2].Cell1.col=i%size;
+            myMaze->myWalls[setHorWalls + innerWalls/2].Cell2.row=(i/size)+1;
+            myMaze->myWalls[setHorWalls + innerWalls/2].Cell2.col=i%size;
             myMaze->myWalls[setHorWalls + innerWalls/2].wall_between=true;
             setHorWalls ++;
             }
@@ -74,34 +72,40 @@ Maze* mzCreate(size_t size)
                 myMaze->myWalls[i] =  myMaze->myWalls[i2];
                 myMaze->myWalls[i2] = temp;
             } 
-
+       /* for(int i = 0; i < innerWalls;i++)
+        {
+            printf("mur %d : cellule 1 : row %zu col %zu \n",i,myMaze->myWalls[i].Cell1.row,myMaze->myWalls[i].Cell1.col );
+            printf("mur %d : cellule 2 : row %zu col %zu \n\n",i,myMaze->myWalls[i].Cell2.row,myMaze->myWalls[i].Cell2.col );
+        }
+        getchar();*/
     //parcour all the walls. At each iteration, adjacent cells are tested to be in the same subset of element.
     //If not, they are put in the same subset and the wall between them is opened
     int wallsToTest = 0;//to parcour the walls
     bool close = false;//to tell if a wall is closed
     
     //find index of Cell1 and Cell2 from their coord
-    size_t indexCell1, indexCell2, numElem;
-    numElem = sqrt(mzSize(myMaze));
+    size_t indexCell1, indexCell2;
     
     while(!mzIsValid(myMaze))
     {
-        indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * numElem + myMaze->myWalls[wallsToTest].Cell1.col;
-        indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * numElem + myMaze->myWalls[wallsToTest].Cell2.col;        
+        indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
+        indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
         ufStatus status = (ufStatus)20;//pas sur de cette instruction
-                //Merges two cells only if they are not already in the same subset
-               status = ufUnion(myMaze->union_Find, indexCell1,indexCell2);
-               if (status == UF_MERGED)
-               {
-                    close = mzIsWallClosed(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2);
-                    mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);
-               }
-               wallsToTest++;
+        //Merges two cells only if they are not already in the same subset
+        status = ufUnion(myMaze->union_Find, indexCell1,indexCell2);
+        if (status == UF_MERGED)
+        {
+            close = mzIsWallClosed(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2);
+            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);
+        }
+        wallsToTest++;
     }
+    printf("fini my maze");
+    getchar();
     return myMaze;
 }
 
-bool mzIsValid(const Maze* maze)
+bool mzIsValid(const Maze* maze)//to change with number of elements
 {
     size_t firstElement = ufFind(maze->union_Find, 0);
     for(size_t i = 1; i < maze->number_elements; i++)

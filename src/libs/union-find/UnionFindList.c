@@ -24,16 +24,16 @@ UnionFind * ufCreate(size_t n_items)
 {
     UnionFind * unionFind;
     unionFind = malloc(sizeof(UnionFind));
-    unionFind->elements = malloc(n_items * n_items * sizeof(*unionFind->elements));
-    unionFind->sentinels = malloc(n_items * n_items * sizeof(*unionFind->sentinels));
-    for(size_t i=0; i < n_items*n_items; i ++)
+    unionFind->elements = malloc(n_items * sizeof(*unionFind->elements));
+    unionFind->sentinels = malloc(n_items * sizeof(*unionFind->sentinels));
+    for(size_t i=0; i < n_items; i ++)
     {
         unionFind->elements[i].numero = i;
         unionFind->elements[i].next = NULL;
         unionFind->elements[i].head = &unionFind->sentinels[i];
         unionFind->sentinels[i].first = &unionFind->elements[i];
         unionFind->sentinels[i].last = &unionFind->elements[i];
-        unionFind->sentinels[i].numberElements = 1;
+        unionFind->sentinels[i].numberElements = 1;      
     }
     return unionFind;
 }
@@ -53,6 +53,7 @@ size_t ufFind(const UnionFind* union_find, size_t item)
 
 ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 {
+    
     if (ufFind(union_find, item1) == ufFind(union_find, item2))
         return UF_SAME;
     else 
