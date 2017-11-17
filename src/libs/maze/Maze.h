@@ -6,7 +6,7 @@
 #define _MAZE_H_
 
 #include "UnionFind.h"
-#include <stbool.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 /* Opaque structure */

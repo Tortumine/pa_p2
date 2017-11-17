@@ -9,9 +9,9 @@
 typedef struct union_find_t UnionFind;
 
 /* Coordinate structure */
-typedef struct coord_t {
+/*typedef struct coord_t {
     size_t row, col;
-} Coord;
+} Coord;*/
 
 typedef enum {UF_ERROR, UF_MERGED, UF_SAME} ufStatus;
 
