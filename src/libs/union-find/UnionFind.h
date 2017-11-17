@@ -8,6 +8,11 @@
 /* Opaque structure */
 typedef struct union_find_t UnionFind;
 
+/* Coordinate structure */
+typedef struct coord_t {
+    size_t row, col;
+} Coord;
+
 typedef enum {UF_ERROR, UF_MERGED, UF_SAME} ufStatus;
 
 
