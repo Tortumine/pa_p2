@@ -80,7 +80,7 @@ Maze* mzCreate(size_t size)
     //find index of Cell1 and Cell2 from their coord
     size_t indexCell1, indexCell2;
     
-    while(!mzIsValid(myMaze))
+    while(!mzIsValid(myMaze) && wallsToTest < innerWalls)
     {
         indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
         indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
@@ -91,7 +91,7 @@ Maze* mzCreate(size_t size)
         {
             //if cells have been merged in the same subset, the wall between them is open
             close = mzIsWallClosed(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2);
-            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);
+            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);            
         }
         wallsToTest++;
     }
@@ -117,7 +117,7 @@ bool mzIsWallClosed(Maze* maze, Coord cell1, Coord cell2)
          || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
          && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
         {
-            if (maze->myWalls->wall_between == true)
+            if (maze->myWalls[i].wall_between == true)
             return false;
             else
             return true;
@@ -135,10 +135,10 @@ void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
          || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
          && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
         {
-            if (close == true)
-                maze->myWalls->wall_between = false;
+            if (close == false)
+                maze->myWalls[i].wall_between = false;
             else
-                maze->myWalls->wall_between = true;
+                maze->myWalls[i].wall_between = true;
             return;
         }
     }
