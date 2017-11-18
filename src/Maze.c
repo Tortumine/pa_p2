@@ -146,6 +146,108 @@ void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
 
 void mzPrint(const Maze* maze, FILE* out)
 {
+
+    /*
+     * Cette fonction parcourt le labirinthe et regarde si y a un mur avec une case voisine
+     *   V :D'abord la case à droite col b = col a +1 / row b = row a
+     *      ca décale à droite
+     *      min col a = 0
+     *      max col a = maze->size-2
+     *
+     *   H :Ensuite la case du dessous col b = col a / row b = row a+1
+     *      ca décale à droite
+     *      min col a = 0
+     *      max col a = maze->size-1
+     *
+     * /!\  Problème, lors des comparaison des cases le résultat renvoyé est toujours "pas de murs"
+     * CF mzIsWallClosed(maze,cell_a,cell_b)
+     */
+    //pFile2 = fopen("myfile2.txt", "a");
+
+    size_t i = 0;
+    size_t j = 0;
+    char h_open[]   = "+   ";
+    char h_close[]  = "+---";
+
+    Coord cell_a,cell_b;
+
+
+    //first border line
+    for(i = 0;i<maze->size;i++)
+    {
+        printf( "%s", h_close);
+    }
+    printf( "+\n");
+    //internals
+    //first line (open on left)
+    cell_a.col=0;
+    cell_a.row=0;
+    cell_b.col=1;
+    cell_b.row=0;
+
+    for(i=0;i<maze->size;i++)
+    {
+        //Vertical
+            if(i==0 && j == 0)//enter
+            {
+                printf( " ");
+            }
+            else//extreme_Left_wall
+            {
+                printf( "|");
+            }
+
+            for(j=0;j<maze->size-1;j++)
+            {
+                cell_a.col=j;
+                cell_b.col=j+1;
+                cell_a.row=i;
+                cell_b.row=i;
+                bool tmp = mzIsWallClosed(maze,cell_a,cell_b);
+                if(tmp)
+                    printf( "   |");
+                else
+                    printf( "    ");
+            }
+
+            if(i<(maze->size-1))//extreme_Right_wall
+            {
+                printf( "   |\n");
+            }
+            else//exit
+            {
+                printf( "    \n");
+            }
+
+        //switching from vertical walls to horizontals
+        cell_a.col=0;
+        cell_b.col=0;
+        cell_a.row=i;
+        cell_b.row=cell_a.row+1;
+
+
+        //Horizontal walls
+        if(i<maze->size-1) {
+            for (j = 0; j < maze->size; j++) {
+                cell_a.col = j;
+                cell_b.col = j;
+                bool tmp = mzIsWallClosed(maze, cell_a, cell_b);
+                if (tmp)
+                    printf("%s", h_close);
+                else
+                    printf("%s", h_open);
+            }
+            printf("+\n");
+        }
+        else    //last border line
+        {
+            for(j=0;j<maze->size;j++)
+            {
+                printf( "%s", h_close);
+            }
+            printf( "+ \n");
+        }
+    }
     return;
 }
 
