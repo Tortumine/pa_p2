@@ -95,6 +95,14 @@ Maze* mzCreate(size_t size)
         }
         wallsToTest++;
     }
+    for(int i = 0; i < innerWalls; i++)
+    {
+        printf("mur numero : %d\n",i);
+        printf("Cell1 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell1.row,myMaze->myWalls[i].Cell1.col);
+        printf("Cell2 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell2.row,myMaze->myWalls[i].Cell2.col);
+        printf("wall between : %d\n\n",myMaze->myWalls[i].wall_between);
+
+    }
     return myMaze;
 }
 
