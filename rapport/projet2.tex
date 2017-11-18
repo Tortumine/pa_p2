@@ -17,6 +17,7 @@
 \usepackage{amsmath} 
 \usepackage{float}
 \usepackage[french,onelanguage,ruled,vlined]{algorithm2e}
+%\usepackage{clrscode3e}
 %\usepackage{algorithm, algpseudocode}
 %\usepackage{tabular}
 \usepackage[utf8]{inputenc}
@@ -71,14 +72,69 @@
 
 \subsection{Implémentation à base de listes chainées}
 
+\begin{description}
+\item[ufFind :] Dans tous les cas, la complexité est teta(1)
+\item[ufUnion :] Dans le meilleur cas, le plus petit ensemble à lier à la suite du second ensemble ne contient qu'un élément. La complexité dans le meilleur cas est donc teta(1). Dans le pire cas, l'ensemble à lier à la suite du second ensemble est de taille N/2, N étant le nombre d'éléments du labyrinthe. La complexité dans le pire cas est donc teta(N/2).
+\end{description}
 \subsection{Implémentation à base d'arbres}
 
 
 \section{Implémentation de la structure du labyrinthe}
+Les données du labyrinthe sont stockées dans la structure Maze. \\
+struct maze\_t \{ \\
+\quad    UnionFind *union\_Find; \\
+\quad     struct Walls *myWalls; \\
+\quad     size\_t size; \\
+\quad     size\_t number\_inner\_walls; \\
+\};\\
 
+La structure "maze\_t" contient la structure "UnionFind", qui sera décrite pour chaque implémentation par la suite. Elle contient également la structure "Walls" qui est un vecteur enregistrant tous les murs internes du labyrinthe. La variable "size" contient la taille du labyrinthe. La variable "number\_inner\_walls" contient le nombre de mur internes du labyrinthe. C'est également la taille du vecteur de type "Walls". \\
+\linebreak
+typedef struct Walls \{ \\
+    Coord Cell1; \\
+    Coord Cell2; \\
+    bool wall\_between; \\
+\};\\
+
+La structure "Walls" contient les coordonnées de deux cellules adjacentes, partageant un mur. La variable booléenne "wall" vaut "true" si le mur est présent. Elle vaut "false" si le mur est absent.\\
+
+\subsection{Implementation par listes chainées}
+La structure union\_find\_t est décrite de cette manière : \\ \\
+struct union\_find\_t \{ \\
+    struct Element* elements; \\
+    struct Sentinel* sentinels; \\
+    size\_t numberComponents; \\
+\}; \\ \\
+Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments des listes chainées. La variable "numberComponents" contient le nombre d'ensembles différents. \\ \\
+typedef struct Element \{\\
+    size\_t numero;\\
+    struct Sentinel* head;\\
+    struct Element* next;\\
+\}Element;\\ \\
+Le "numero" correspond à l'indice de l'élément dans le labyrinthe. Le pointeur "head" pointe vers la sentinelle de l'ensemble auquel appartient l'élément. Le pointeur "next" pointe vers l'élement suivant dans la liste chainée.\\
+\\
+typedef struct Sentinel \{ \\
+    struct Element* first; \\
+    struct Element* last; \\
+    size\_t numberElements; \\
+\}Sentinel;\\ \\
+Le pointeur "first" pointe vers le premier élément de la liste chainée liée à la sentinelle. Le pointeur "last" pointe vers le dernier élément de cette liste. La variable "numberElements" contient le nombre d'éléments présents dans cette liste.
+\subsection{Implementation par arbres}
+
+ 
 
 \section{Pseudocode des fonctions mzCreate et MzIsValid}
-
+\begin{algorithm}
+\caption{MzIsValid}
+\begin{algorithmic}[1]
+\bool mzIsValid(const Maze* maze)
+{
+    if (ufComponentsCount(maze->union_Find) > 1)
+        return false;
+    else return true;
+}
+\end {algorithmic}
+\end{algorithm}
 
 \section{Analyse de la complexité en temps de MzCreate et MzIsValid}
 
