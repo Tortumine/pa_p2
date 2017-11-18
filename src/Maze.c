@@ -78,7 +78,8 @@ Maze* mzCreate(size_t size)
     //find index of Cell1 and Cell2 from their coord
     size_t indexCell1, indexCell2;
     
-    while(!mzIsValid(myMaze)&& wallsToTest < innerWalls)
+
+    while(!mzIsValid(myMaze) && wallsToTest < innerWalls)
     {
         indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
         indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
@@ -89,9 +90,17 @@ Maze* mzCreate(size_t size)
         {
             //if cells have been merged in the same subset, the wall between them is open
             close = mzIsWallClosed(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2);
-            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);
+            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);            
         }
         wallsToTest++;
+    }
+    for(int i = 0; i < innerWalls; i++)
+    {
+        printf("mur numero : %d\n",i);
+        printf("Cell1 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell1.row,myMaze->myWalls[i].Cell1.col);
+        printf("Cell2 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell2.row,myMaze->myWalls[i].Cell2.col);
+        printf("wall between : %d\n\n",myMaze->myWalls[i].wall_between);
+
     }
     return myMaze;
 }
