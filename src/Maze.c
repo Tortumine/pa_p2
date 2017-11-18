@@ -94,14 +94,6 @@ Maze* mzCreate(size_t size)
         }
         wallsToTest++;
     }
-    for(int i = 0; i < innerWalls; i++)
-    {
-        printf("mur numero : %d\n",i);
-        printf("Cell1 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell1.row,myMaze->myWalls[i].Cell1.col);
-        printf("Cell2 row : %zu, col : %zu\n",myMaze->myWalls[i].Cell2.row,myMaze->myWalls[i].Cell2.col);
-        printf("wall between : %d\n\n",myMaze->myWalls[i].wall_between);
-
-    }
     return myMaze;
 }
 
@@ -155,7 +147,7 @@ void mzPrint(const Maze* maze, FILE* out)
 {
 
     /* Pour commencer la ligne du haut est dessinée
-     * Cette fonction parcourt le labirinthe et regarde si y a un mur avec une case voisine
+     * Cette fonction parcourt le labyrinthe et regarde si y a un mur avec une case voisine
      *   V :D'abord la case à droite col b = col a +1 / row b = row a
      *      ca décale à droite
      *      min col a = 0
@@ -166,7 +158,7 @@ void mzPrint(const Maze* maze, FILE* out)
      *      min col a = 0
      *      max col a = maze->size-1
      *
-     *  Pour finir la ligne du tat est desssinée
+     *  Pour finir la ligne du tat est dessinée
      * /!\  Problème, lors des comparaison des cases le résultat renvoyé est toujours "pas de murs"
      * CF mzIsWallClosed(maze,cell_a,cell_b)
      */
@@ -208,7 +200,7 @@ void mzPrint(const Maze* maze, FILE* out)
             cell_b.col = j + 1;
             cell_a.row = i;
             cell_b.row = i;
-            bool tmp = mzIsWallClosed(maze, cell_a, cell_b);
+            bool tmp = mzIsWallClosed((Maze*)maze, cell_a, cell_b);
             if (!tmp)
                 fprintf(out, "  |");
             else
@@ -235,19 +227,19 @@ void mzPrint(const Maze* maze, FILE* out)
             for (j = 0; j < maze->size; j++) {
                 cell_a.col = j;
                 cell_b.col = j;
-                bool tmp = mzIsWallClosed(maze, cell_a, cell_b);
+                bool tmp = mzIsWallClosed((Maze*)maze, cell_a, cell_b);
                 if (!tmp)
-                    printf("%s", h_close);
+                    fprintf(out,"%s", h_close);
                 else
-                    printf("%s", h_open);
+                    fprintf(out,"%s", h_open);
             }
-            printf("+\n");
+            fprintf(out,"+\n");
         } else    //last border line
         {
             for (j = 0; j < maze->size; j++) {
                 fprintf(out, "%s", h_close);
             }
-            fprintf(out, "+ \n");
+            fprintf(out, "+");//pas de retour à la ligne à la fin
         }
     }
 }

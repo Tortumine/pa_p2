@@ -104,6 +104,5 @@ ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 }
 size_t ufComponentsCount(const UnionFind* union_find)
 {
-    printf("number of elements : %zu \n",union_find->numberComponents);
     return union_find->numberComponents;
 }

@@ -132,6 +132,5 @@ size_t ufFind(const UnionFind* union_find, size_t item)
  * ------------------------------------------------------------------------- */
 size_t ufComponentsCount(const UnionFind* union_find)
 {
-    printf("number of elements : %zu \n",union_find->n_trees);
     return union_find->n_trees;
 }
