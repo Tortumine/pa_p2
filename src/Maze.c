@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <math.h>
 #include "Maze.h"
-#include "UnionFind.h"
 
 struct maze_t {
     UnionFind *union_Find;
@@ -23,7 +21,7 @@ typedef struct Walls {
 
 Maze* mzCreate(size_t size)
 {
-    int innerWalls;//le nombre de murs intérieurs.
+    size_t innerWalls;//le nombre de murs intérieurs.
     Maze *myMaze;
     myMaze = malloc(sizeof(Maze));
     myMaze->size = size;
@@ -64,9 +62,9 @@ Maze* mzCreate(size_t size)
         }
      //Mixing the walls. This way, the walls will be parcoured on a random way.
        struct Walls temp;
-        for(int i=0;i<innerWalls;i++)
+        for(size_t i=0;i<innerWalls;i++)
             { 
-                int i2 = rand()%innerWalls;  
+                size_t i2 = rand()%innerWalls;
                 
                 temp =  myMaze->myWalls[i];
                 myMaze->myWalls[i] =  myMaze->myWalls[i2];
@@ -74,8 +72,8 @@ Maze* mzCreate(size_t size)
             } 
     //parcour all the walls. At each iteration, adjacent cells are tested to be in the same subset of element.
     //If not, they are put in the same subset and the wall between them is opened
-    int wallsToTest = 0;//to parcour the walls
-    bool close = false;//to tell if a wall is closed
+    size_t wallsToTest = 0;//to parcour the walls
+    bool close;//to tell if a wall is closed
     
     //find index of Cell1 and Cell2 from their coord
     size_t indexCell1, indexCell2;
@@ -84,7 +82,7 @@ Maze* mzCreate(size_t size)
     {
         indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
         indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
-        ufStatus status = (ufStatus)20;//pas sur de cette instruction
+        ufStatus status;
         //Merges two cells only if they are not already in the same subset
         status = ufUnion(myMaze->union_Find, indexCell1,indexCell2);
         if (status == UF_MERGED)
@@ -176,9 +174,9 @@ void mzPrint(const Maze* maze, FILE* out)
     //first border line
     for(i = 0;i<maze->size;i++)
     {
-        printf( "%s", h_close);
+        fprintf(out,"%s", h_close);
     }
-    printf( "+\n");
+    fprintf(out,"+\n");
     //internals
     //first line (open on left)
     cell_a.col=0;
@@ -186,49 +184,45 @@ void mzPrint(const Maze* maze, FILE* out)
     cell_b.col=1;
     cell_b.row=0;
 
-    for(i=0;i<maze->size;i++)
-    {
+    for(i=0;i<maze->size;i++) {
         //Vertical
-            if(i==0 && j == 0)//enter
-            {
-                printf( " ");
-            }
-            else//extreme_Left_wall
-            {
-                printf( "|");
-            }
+        if (i == 0 && j == 0)//enter
+        {
+            fprintf(out, " ");
+        } else//extreme_Left_wall
+        {
+            fprintf(out, "|");
+        }
 
-            for(j=0;j<maze->size-1;j++)
-            {
-                cell_a.col=j;
-                cell_b.col=j+1;
-                cell_a.row=i;
-                cell_b.row=i;
-                bool tmp = mzIsWallClosed(maze,cell_a,cell_b);
-                if(!tmp)
-                    printf( "  |");
-                else
-                    printf( "   ");
-            }
+        for (j = 0; j < maze->size - 1; j++) {
+            cell_a.col = j;
+            cell_b.col = j + 1;
+            cell_a.row = i;
+            cell_b.row = i;
+            bool tmp = mzIsWallClosed(maze, cell_a, cell_b);
+            if (!tmp)
+                fprintf(out, "  |");
+            else
+                fprintf(out, "   ");
+        }
 
-            if(i<(maze->size-1))//extreme_Right_wall
-            {
-                printf( "  |\n");
-            }
-            else//exit
-            {
-                printf( "   \n");
-            }
+        if (i < (maze->size - 1))//extreme_Right_wall
+        {
+            fprintf(out, "  |\n");
+        } else//exit
+        {
+            fprintf(out, "   \n");
+        }
 
         //switching from vertical walls to horizontals
-        cell_a.col=0;
-        cell_b.col=0;
-        cell_a.row=i;
-        cell_b.row=cell_a.row+1;
+        cell_a.col = 0;
+        cell_b.col = 0;
+        cell_a.row = i;
+        cell_b.row = cell_a.row + 1;
 
 
         //Horizontal walls
-        if(i<maze->size-1) {
+        if (i < maze->size - 1) {
             for (j = 0; j < maze->size; j++) {
                 cell_a.col = j;
                 cell_b.col = j;
@@ -239,17 +233,14 @@ void mzPrint(const Maze* maze, FILE* out)
                     printf("%s", h_open);
             }
             printf("+\n");
-        }
-        else    //last border line
+        } else    //last border line
         {
-            for(j=0;j<maze->size;j++)
-            {
-                printf( "%s", h_close);
+            for (j = 0; j < maze->size; j++) {
+                fprintf(out, "%s", h_close);
             }
-            printf( "+ \n");
+            fprintf(out, "+ \n");
         }
     }
-    return;
 }
 
 size_t mzSize(const Maze* maze)
