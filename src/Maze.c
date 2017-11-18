@@ -80,7 +80,7 @@ Maze* mzCreate(size_t size)
     //find index of Cell1 and Cell2 from their coord
     size_t indexCell1, indexCell2;
     
-    while(!mzIsValid(myMaze))
+    while(!mzIsValid(myMaze)&& wallsToTest < innerWalls)
     {
         indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
         indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
@@ -117,7 +117,7 @@ bool mzIsWallClosed(Maze* maze, Coord cell1, Coord cell2)
          || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
          && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
         {
-            if (maze->myWalls->wall_between == true)
+            if (maze->myWalls[i].wall_between == true)
             return false;
             else
             return true;
@@ -135,10 +135,10 @@ void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
          || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
          && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
         {
-            if (close == true)
-                maze->myWalls->wall_between = false;
+            if (close == false)
+                maze->myWalls[i].wall_between = false;
             else
-                maze->myWalls->wall_between = true;
+                maze->myWalls[i].wall_between = true;
             return;
         }
     }
@@ -147,7 +147,7 @@ void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
 void mzPrint(const Maze* maze, FILE* out)
 {
 
-    /*
+    /* Pour commencer la ligne du haut est dessinée
      * Cette fonction parcourt le labirinthe et regarde si y a un mur avec une case voisine
      *   V :D'abord la case à droite col b = col a +1 / row b = row a
      *      ca décale à droite
@@ -159,6 +159,7 @@ void mzPrint(const Maze* maze, FILE* out)
      *      min col a = 0
      *      max col a = maze->size-1
      *
+     *  Pour finir la ligne du tat est desssinée
      * /!\  Problème, lors des comparaison des cases le résultat renvoyé est toujours "pas de murs"
      * CF mzIsWallClosed(maze,cell_a,cell_b)
      */
@@ -166,8 +167,8 @@ void mzPrint(const Maze* maze, FILE* out)
 
     size_t i = 0;
     size_t j = 0;
-    char h_open[]   = "+   ";
-    char h_close[]  = "+---";
+    char h_open[]   = "+  ";
+    char h_close[]  = "+--";
 
     Coord cell_a,cell_b;
 
@@ -204,19 +205,19 @@ void mzPrint(const Maze* maze, FILE* out)
                 cell_a.row=i;
                 cell_b.row=i;
                 bool tmp = mzIsWallClosed(maze,cell_a,cell_b);
-                if(tmp)
-                    printf( "   |");
+                if(!tmp)
+                    printf( "  |");
                 else
-                    printf( "    ");
+                    printf( "   ");
             }
 
             if(i<(maze->size-1))//extreme_Right_wall
             {
-                printf( "   |\n");
+                printf( "  |\n");
             }
             else//exit
             {
-                printf( "    \n");
+                printf( "   \n");
             }
 
         //switching from vertical walls to horizontals
@@ -232,7 +233,7 @@ void mzPrint(const Maze* maze, FILE* out)
                 cell_a.col = j;
                 cell_b.col = j;
                 bool tmp = mzIsWallClosed(maze, cell_a, cell_b);
-                if (tmp)
+                if (!tmp)
                     printf("%s", h_close);
                 else
                     printf("%s", h_open);
