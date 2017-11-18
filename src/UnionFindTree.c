@@ -36,7 +36,7 @@ UnionFind* ufCreate(size_t n_items)
     tmp->n_trees = n_items;
 
     //Inisializing
-    for(int i = 0; i<n_items; i++)
+    for(size_t i = 0; i<n_items; i++)
     {
         tmp->items[i]=i;
         tmp->parrents[i]=i;
