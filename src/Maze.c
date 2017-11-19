@@ -57,18 +57,22 @@ Maze* mzCreate(size_t size)
             myMaze->myWalls[setHorWalls + innerWalls/2].Cell2.row=(i/size)+1;
             myMaze->myWalls[setHorWalls + innerWalls/2].Cell2.col=i%size;
             myMaze->myWalls[setHorWalls + innerWalls/2].wall_between=true;
-            setHorWalls ++;
+            setHorWalls ++;          
             }
         }
-     //Mixing the walls. This way, the walls will be parcoured on a random way.
-       struct Walls temp;
-        for(size_t i=0;i<innerWalls;i++)
+     //The order in which myWalls will be parcoured is determined by the array parcours.
+     //Which is an array of shuffle indexes
+       size_t* parcours;
+       parcours = malloc(innerWalls * sizeof(size_t));
+       for (size_t i=0;i<innerWalls;i++)
+       {parcours[i] = i;}
+        size_t temp;
+       for(size_t i=0;i<innerWalls;i++)
             { 
-                size_t i2 = rand()%innerWalls;
-                
-                temp =  myMaze->myWalls[i];
-                myMaze->myWalls[i] =  myMaze->myWalls[i2];
-                myMaze->myWalls[i2] = temp;
+                size_t i2 = rand()%innerWalls;               
+                temp =  parcours[i];
+                parcours[i] =  parcours[i2];
+                parcours[i2] = temp;
             } 
     //parcour all the walls. At each iteration, adjacent cells are tested to be in the same subset of element.
     //If not, they are put in the same subset and the wall between them is opened
@@ -77,20 +81,21 @@ Maze* mzCreate(size_t size)
     
     //find index of Cell1 and Cell2 from their coord
     size_t indexCell1, indexCell2;
-    
+    size_t visit = 0; //is the index of the wall to visit
 
     while(!mzIsValid(myMaze) && wallsToTest < innerWalls)
     {
-        indexCell1 = myMaze->myWalls[wallsToTest].Cell1.row * size + myMaze->myWalls[wallsToTest].Cell1.col;
-        indexCell2 = myMaze->myWalls[wallsToTest].Cell2.row * size + myMaze->myWalls[wallsToTest].Cell2.col;        
-        ufStatus status;
+        visit = parcours[wallsToTest];
+        indexCell1 = myMaze->myWalls[visit].Cell1.row * size + myMaze->myWalls[visit].Cell1.col;
+        indexCell2 = myMaze->myWalls[visit].Cell2.row * size + myMaze->myWalls[visit].Cell2.col;        
+        ufStatus status;     
         //Merges two cells only if they are not already in the same subset
         status = ufUnion(myMaze->union_Find, indexCell1,indexCell2);
         if (status == UF_MERGED)
         {
             //if cells have been merged in the same subset, the wall between them is open
-            close = mzIsWallClosed(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2);
-            mzSetWall(myMaze, myMaze->myWalls[wallsToTest].Cell1,myMaze->myWalls[wallsToTest].Cell2, close);            
+            close = mzIsWallClosed(myMaze, myMaze->myWalls[visit].Cell1,myMaze->myWalls[visit].Cell2);
+            mzSetWall(myMaze, myMaze->myWalls[visit].Cell1,myMaze->myWalls[visit].Cell2, close);            
         }
         wallsToTest++;
     }
@@ -105,42 +110,38 @@ bool mzIsValid(const Maze* maze)
 }
 bool mzIsWallClosed(Maze* maze, Coord cell1, Coord cell2)
 {
-   //parcour the array until it finds the wall between the two given cells.
-   //returns true if there is no wall set up
-   //returns false otherwise
-   //complexity O(N)
-    for(size_t i=0;i < maze->number_inner_walls; i++)
-    {
-        if((maze->myWalls[i].Cell1.row == cell1.row && maze->myWalls[i].Cell1.col == cell1.col
-         && maze->myWalls[i].Cell2.row == cell2.row && maze->myWalls[i].Cell2.col == cell2.col)
-         || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
-         && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
-        {
-            if (maze->myWalls[i].wall_between == true)
-            return false;
-            else
-            return true;
-        }
-    }
-    return true;
+   size_t indexCell1 = cell1.row * maze->size + cell1.col;
+   size_t indexCell2 = cell2.row * maze->size + cell2.col;
+   size_t indexArray;
+
+   if (indexCell1 == (indexCell2 - 1))
+   {
+        indexArray = indexCell1 - indexCell1/maze->size;
+   } 
+   else
+    indexArray = indexCell1 + maze->number_inner_walls/2;
+   if (maze->myWalls[indexArray].wall_between == true)
+        return false;
+    else
+        return true;
 }
 void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
 {
-    //sets the wall between two cells. Parcour of the array until the specific wall is found.
-    for(size_t i=0;i < maze->number_inner_walls; i++)
-    {
-        if((maze->myWalls[i].Cell1.row == cell1.row && maze->myWalls[i].Cell1.col == cell1.col
-         && maze->myWalls[i].Cell2.row == cell2.row && maze->myWalls[i].Cell2.col == cell2.col)
-         || (maze->myWalls[i].Cell2.row == cell1.row && maze->myWalls[i].Cell2.col == cell1.col
-         && maze->myWalls[i].Cell1.row == cell2.row && maze->myWalls[i].Cell1.col == cell2.col))
-        {
-            if (close == false)
-                maze->myWalls[i].wall_between = false;
-            else
-                maze->myWalls[i].wall_between = true;
-            return;
-        }
-    }
+     size_t indexCell1 = cell1.row * maze->size + cell1.col;
+   size_t indexCell2 = cell2.row * maze->size + cell2.col;
+   size_t indexArray;
+   if (indexCell1 == (indexCell2 - 1))
+   {
+        indexArray = indexCell1 - indexCell1/maze->size;
+   } 
+   else
+    indexArray = indexCell1 + maze->number_inner_walls/2;
+
+    if (close == false)
+        maze->myWalls[indexArray].wall_between = false;
+    else
+        maze->myWalls[indexArray].wall_between = true;
+
 }
 
 void mzPrint(const Maze* maze, FILE* out)
