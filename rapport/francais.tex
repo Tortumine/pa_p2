@@ -1,0 +1,137 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{array}
+\usepackage{shortvrb}
+\usepackage{listings}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts}
+\usepackage{fullpage}
+\usepackage{enumerate}
+\usepackage{graphicx}             % import, scale, and rotate graphics
+\usepackage{subfigure}            % group figures
+\usepackage{alltt}
+\usepackage{url}
+\usepackage{indentfirst}
+\usepackage{eurosym}
+\usepackage{amsmath} 
+\usepackage{float}
+\usepackage[french,onelanguage,ruled,vlined]{algorithm2e}
+%\usepackage{algorithm, algpseudocode}
+%\usepackage{tabular}
+\usepackage[utf8]{inputenc}
+\usepackage{algpseudocode}
+
+%Définition du c pour les "listings"
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C
+}
+
+
+\begin{document}
+\begin{titlepage}
+
+   \begin{figure}[htbp]
+      \centering
+      \includegraphics{uliege-logo-couleurs-300.jpg}
+   \end{figure}
+  	
+  	\hfill
+
+	\begin{center}
+		\vfill
+		\textbf{
+		\Huge{INFOXXXX - Cours}}\\
+		\bigskip
+		\huge{Titre}\\
+		\bigskip %saut de ligne
+		\smallskip
+		\Large{Collaborateur0\\Collaborateur1\\Collaborateur2} \\
+		\bigskip
+		\smallskip
+		\large{\today}\\%date
+		\vfill
+		\large{Université de Liège}
+	\end{center}
+\end{titlepage}
+\clearpage
+\clearpage
+\section{Analyse théorique}
+	\subsection{Variante d'union-find à base d'arbres choisie}
+	La version de l'union-find en arbre implémentée est une amélioration poussée de la version en arbre classique. Comme dans la version de base chaque élément pointe vers son parent.
+	Lors d'une union de sous-ensembles, les racines des deux arbres sont fusionnés, un parent se retrouve donc avec deux enfants.
+	
+	\paragraph{Rang}			
+	La première amélioration consiste à associer un rang a chaque élément. Cela permet d'optimiser la fusion. L'union-find de base pouvait être fort déséquilibré, ce qui rendais l'appel Find() assez long. L'ajout d'un rang permet d'équilibrer l'arbre lors de l'union. Le rang d'un élément représente la distance jusqu'à la feuille la plus éloignée. 
+	
+	Lors d'une fusion de deux arbres de même hauteur, le rang de la nouvelle racine est incrémenté. Si les rangs sont différents, l'arbre ayant le rang le plus petit est ajouté à la racine de l'arbre le plus grand. Cela permet d'équilibrer la structure au fur et à mesure de la construction et ainsi de diminuer la hauteur maximale.
+	
+	\paragraph{Compression de chemin}
+	Cette seconde amélioration consiste à utiliser la fonction Find() pour aplatir l'arbre qui est en train d'être parcouru. 
+	Cela se fait lors de l'appel récursif de Find() qui renvoi la racine. Cette racine est ensuite définie en tant que parent de chaque item parcouru récursivement. De cette manière, tous les éléments parcouru par un Find(), pointeront directement vers la racine et nécessiteront donc un temps constant pour récupérer cette dernière.
+	\paragraph{Implémentation C}	
+	La structure en C est la suivante:
+	\begin{lstlisting}[style=CStyle]
+struct union_find_t {
+    size_t* items;
+    size_t* parrents;
+    size_t* rank;
+    size_t n_items;
+    size_t n_trees;
+};
+\end{lstlisting}
+
+Cette structure est composée de 3 tableaux:
+\begin{itemize}
+\item \textbf{items[n] :} Indices dans la grille du labyrinthe (n).
+\item \textbf{parents[n] :} Parent direct de l'item n.
+\item \textbf{rank[n] :} Rang de l'item n
+\end{itemize}
+Deux autres variables sont définies dans la structure:
+\begin{itemize}
+\item \textbf{n\_items :} Nombre total d'éléments.
+\item \textbf{n\_trees :} Nombre d'ensembles.
+\end{itemize}
+	\subsection{Complexités en temps de ufUnion et ufFind}
+		\subsubsection{Tree}
+		\paragraph{Find}
+		theta(Q)=c=1		
+		\paragraph{Union}
+		theta(Q)=c=1
+	\subsection{Implémentation de la structure du labyrinthe}
+	\subsection{Pseudo-code des fonctions mzCreate et MzIsValid}
+	\subsection{Analyse de la complexité en temps de MzCreate et MzIsValid}
+		\subsubsection{Implémentation à base de listes chainées}
+		\subsubsection{Implémentation à base d'arbres}
+			\paragraph{Find}		
+		Find d'un élément prends un temps proportionnel à la hauteur de l'arbre la première fois. Avec l'amélioration \textit{Compression de chemin} la hauteur de cet élément et de ces parents est ramenée à 1, ce qui garantit un temps constant pour chaque élément teta(n)=n.
+		\paragraph{Union}
+		Union utilise Find et des opérations à temps constants. La complexité de Union est donc teta(n)=n
+\section{Analyse empirique}
+	\subsection{Tests de performance}
+	\subsection{Analyse des résultats}
+
+\end{document}
