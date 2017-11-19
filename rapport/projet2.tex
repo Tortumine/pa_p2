@@ -16,13 +16,13 @@
 \usepackage{eurosym}
 \usepackage{amsmath} 
 \usepackage{float}
-\usepackage[french,onelanguage,ruled,vlined]{algorithm2e}
+%\usepackage[french,onelanguage,ruled,vlined]{algorithm2e}
 %\usepackage{clrscode3e}
 %\usepackage{algorithm, algpseudocode}
 %\usepackage{tabular}
 \usepackage[utf8]{inputenc}
-
-\usepackage{algpseudocode}
+\usepackage{clrscode3e}
+%\usepackage{algpseudocode}
 
 % changement de la numerotation
 \setcounter{secnumdepth}{5}
@@ -65,21 +65,22 @@
 %\tableofcontents
 \clearpage
 
-\section{Description de la variante d'union-find à base d'arbres choisie}
+\section{Analyse Théorique}
+\subsection{Description de la variante d'union-find à base d'arbres choisie}
 
 
-\section{Complexités en temps de ufUnion et ufFind}
+\subsection{Complexités en temps de ufUnion et ufFind}
 
-\subsection{Implémentation à base de listes chainées}
+\subsubsection{Implémentation à base de listes chainées}
 
 \begin{description}
-\item[ufFind :] Dans tous les cas, la complexité est teta(1)
-\item[ufUnion :] Dans le meilleur cas, le plus petit ensemble à lier à la suite du second ensemble ne contient qu'un élément. La complexité dans le meilleur cas est donc teta(1). Dans le pire cas, l'ensemble à lier à la suite du second ensemble est de taille N/2, N étant le nombre d'éléments du labyrinthe. La complexité dans le pire cas est donc teta(N/2).
+\item[ufFind :] Dans tous les cas, la complexité est theta(1)
+\item[ufUnion :] Dans le meilleur cas, le plus petit ensemble à lier à la suite du second ensemble ne contient qu'un élément. La complexité dans le meilleur cas est donc theta(1). Dans le pire cas, l'ensemble à lier à la suite du second ensemble est de taille N/2, N étant le nombre d'éléments du labyrinthe. La complexité dans le pire cas est donc theta(N/2).
 \end{description}
-\subsection{Implémentation à base d'arbres}
+\subsubsection{Implémentation à base d'arbres}
 
 
-\section{Implémentation de la structure du labyrinthe}
+\subsection{Implémentation de la structure du labyrinthe}
 Les données du labyrinthe sont stockées dans la structure Maze. \\
 struct maze\_t \{ \\
 \quad    UnionFind *union\_Find; \\
@@ -98,14 +99,14 @@ typedef struct Walls \{ \\
 
 La structure "Walls" contient les coordonnées de deux cellules adjacentes, partageant un mur. La variable booléenne "wall" vaut "true" si le mur est présent. Elle vaut "false" si le mur est absent.\\
 
-\subsection{Implementation par listes chainées}
+\subsubsection{Implementation par listes chainées}
 La structure union\_find\_t est décrite de cette manière : \\ \\
 struct union\_find\_t \{ \\
     struct Element* elements; \\
     struct Sentinel* sentinels; \\
     size\_t numberComponents; \\
 \}; \\ \\
-Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments des listes chainées. La variable "numberComponents" contient le nombre d'ensembles différents. \\ \\
+Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments de chaque liste chainée. La variable "numberComponents" contient le nombre d'ensembles distincts. \\ \\
 typedef struct Element \{\\
     size\_t numero;\\
     struct Sentinel* head;\\
@@ -119,26 +120,73 @@ typedef struct Sentinel \{ \\
     size\_t numberElements; \\
 \}Sentinel;\\ \\
 Le pointeur "first" pointe vers le premier élément de la liste chainée liée à la sentinelle. Le pointeur "last" pointe vers le dernier élément de cette liste. La variable "numberElements" contient le nombre d'éléments présents dans cette liste.
-\subsection{Implementation par arbres}
+\subsubsection{Implementation par arbres}
 
  
 
-\section{Pseudocode des fonctions mzCreate et MzIsValid}
-\begin{algorithm}
-\caption{MzIsValid}
-\begin{algorithmic}[1]
-\bool mzIsValid(const Maze* maze)
-{
-    if (ufComponentsCount(maze->union_Find) > 1)
-        return false;
-    else return true;
-}
-\end {algorithmic}
-\end{algorithm}
+\subsection{Pseudocode des fonctions mzCreate et MzIsValid}
 
-\section{Analyse de la complexité en temps de MzCreate et MzIsValid}
+\begin{codebox}
+\Procname {$mzIsValid(maze)$}
+\li    \If $\proc{ufComponentsCount}(maze->union\_Find) > 1$
+\li    \Then \Return $false;$
+\li    \Else 
+\li 		\Return $true;$
+\end{codebox}
 
-\subsection{Implémentation à base de listes chainées}
+\begin{codebox}
+\Procname {$mzCreate(size)$}
+	\li $innerWalls \gets \proc{NumberInnerWalls}(size)$
+	\li $myMaze->size = size$
+	\li $myMaze->union_find \gets \proc{ufCreate}(size * size)$
+	\li $myMaze->number\_inner\_walls \gets innerWalls$
+	\li $\proc{SetUpWalls}(myMaze->myWalls, size*size)$
+	\li $\proc{ShuffleWalls}(myMaze->myWalls, myMaze->number\_inner\_walls)$	
+	\li $wallsToTest \gets 0$	
+	\li \While $!\proc{mzIsValid}(myMaze) \&\& wallsToTest < innerWalls$
+	\li \Do $indexCell1 \gets \proc{IndexFromCoord}(myMaze->myWalls[wallsToTest].Cell1)$
+	\li 	$indexCell2 \gets \proc{IndexFromCoord}(myMaze->myWalls[wallsToTest].Cell2)$
+	\li 	$status \gets \proc{ufUnion}(myMaze->union\_Find, indexCell1, indexCell2)$
+	\li 	\If $status == UF\_MERGED$
+			\Then
+	\li 		$close \gets \proc{mzIsWallClosed}(myMaze, myMaze->myWalls[wallsToTest].Cell1,$ \\$myMaze->myWalls[wallsToTest].Cell2)$
+	\li 		$\proc{mzSetWall}(myMaze, myMaze->myWalls[wallsToTest].Cell1,$ \\ $ myMaze->myWalls[wallsToTest].Cell2, close)$
+			\End
+	\li $wallsToTest++$	
+		\End
+	\li \Return $myMaze$
+\end{codebox}
+\subsection{Analyse de la complexité en temps de mzCreate et mzIsValid}
 
-\subsection{Implémentation à base d'arbres}
+\subsubsection{Implémentation à base de listes chainées}
+\begin{description}
+\item[mzIsValid :]La fonction ufComponentsCount s'écrit comme telle :
+\begin{codebox}
+\Procname{$ufComponentsCount(union_Find)$}
+\li \Return $union_Find->numberComponents$
+\end{codebox}
+Dans tous les cas, sa complexité est theta(1).
+
+\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. La ligne 3 est theta($N^{2}$) car chaque cellule est visitée une à une. La ligne 5 nécessite ($N^{2}$) itérations car toutes les cellules sont visitées. Donc theta($N^{2}$).
+A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc theta(2$N^{2}$).
+C'est la boucle à la ligne 8 qui va déterminer le meilleur et le pire cas. \\
+\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations. A la ligne 11, le meilleur cas correspond à la connexion d'une seule cellule à la fois. La complexité est donc propotionnelle au nombre d'itérations de la boucle.  Donc une complexité theta(N).
+Il y aura donc au total $N^{2}$-1 appels aux fonctions MzIsWallClosed et MzSetWall pour lesquelles, dans le meilleur cas, les élements de la structure myWalls sont ordonnés sur les N premières positions.
+Cela fait donc un nombre d'opérations : \\
+\begin{equation}
+ 2 * \sum\limits_{i=1}^{N^{2}-1} i = N^{4} - 3N^{2}
+\end{equation}
+\\Ce qui donne une complexité theta($N^{4}$) pour les lignes 13 et 14. \textbf{Dans le meilleur cas}, la complexité est theta($N^{4}$)
+\textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Les lignes 9, 10, 12 et 15 cumulent donc chacune une complexité theta{$N^{2}$}. Il n'y a cependant toujours que $N^{2}$-1 opérations. Mais pour les lignes 13 et 14, le pire cas correspond au cas où les murs visités sont à la fin du tableau. Cela fait un nombre d'opérations :
+\begin{equation}
+ 2 * \sum\limits_{i=N^{2}-2N-1}^{2N^{2}-2N} i = 2 * ((\sum\limits_{i=1}^{2N^{2}-2N} i) - (\sum\limits_{i=1}^{N^{2}-2N -1} i)) = 3N^{4} - 4N^{3} - N^{2} - 4N -2
+\end{equation}
+Ce qui donne pour ces deux lignes une complexité theta($3N^{4}$). Pour la ligne 11, toutes les itérations qui ne provoquent pas de connexion sont de complexité 1 et donc sont négligeables. Les $N^{2}$ -1 autres sont à prendre en compte. Cependant, leur complexité est inférieure à la complexité pour l'ouverture du maze.
+\textbf{Dans le pire cas, la complexité est $3N^{4}$}
+\end{description}
+
+
+\subsubsection{Implémentation à base d'arbres}
+
+\section{Analyse empirique}
 \end{document}
