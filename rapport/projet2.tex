@@ -39,7 +39,7 @@
 
    \begin{figure}[htbp]
       \centering
-%      \includegraphics{logoULG.jpg}
+      \includegraphics{uliege-logo-couleurs-300.jpg}
    \end{figure}
   	
   	\hfill
@@ -47,27 +47,34 @@
 	\begin{center}
 		\vfill
 		\textbf{
-		\Huge{INFO2050 - Programmation avancée}}\\
+		\Huge{INFOXXXX - Cours}}\\
 		\bigskip
-		\huge{Projet 2: Structures de données}\\
+		\huge{Titre}\\
 		\bigskip %saut de ligne
 		\smallskip
-		\Large{Antoine Sadzot - Aliaksei Mazurchyk} \\
+		\Large{Collaborateur0\\Collaborateur1\\Collaborateur2} \\
 		\bigskip
 		\smallskip
-		\large{18 Novembre 2017}\\%date
+		\large{\today}\\%date
 		\vfill
 		\large{Université de Liège}
 	\end{center}
 \end{titlepage}
 \clearpage
-%\maketitle
-%\tableofcontents
 \clearpage
 
 \section{Analyse Théorique}
-\subsection{Description de la variante d'union-find à base d'arbres choisie}
-
+\subsection{Variante d'union-find à base d'arbres choisie}
+	La version de l'union-find en arbre implémentée est une amélioration poussée de la version en arbre classique. Comme dans la version de base chaque élément pointe vers son parent.
+	Lors d'une union de sous-ensembles, les racines des deux arbres sont fusionnés, un parent se retrouve donc avec deux enfants.
+	
+	\paragraph{Rang}			
+	La première amélioration consiste à associer un rang a chaque élément. Cela permet d'optimiser la fusion. L'union-find de base pouvait être fort déséquilibré, ce qui rendais l'appel Find() assez long. L'ajout d'un rang permet d'équilibrer l'arbre lors de l'union. 
+	
+	Au début tous les éléments ont un rang 0. Lors d'une fusion de deux arbres de même hauteur, le rang de la nouvelle racine est incrémenté de 1. Si les rangs sont différents, l'arbre ayant le rang le plus petit est ajouté à la racine de l'arbre le plus grand. Cela permet d'équilibrer la structure au fur et à mesure de la construction et ainsi de diminuer la hauteur maximale.
+	
+	\paragraph{Compression de chemin}
+	Cette seconde amélioration consiste à utiliser la fonction Find() pour aplatir l'arbre. Cela ce fait lors de l'appel récursif, la racine de l'arbre remonte dans la call-stack et est définie en tant que parent de chaque neud parcouru. De cette manière, tous les éléments parcouru par un Find(), pointeront directement vers la racine et nécessiteront donc un temps constant pour récupérer cette dernière.
 
 \subsection{Complexités en temps de ufUnion et ufFind}
 
@@ -187,6 +194,43 @@ On observe que la complexité en temps du pire et du meilleur cas sont très pro
 
 
 \subsubsection{Implémentation à base d'arbres}
+La structure en C est la suivante:
+	\begin{lstlisting}[style=CStyle]
+struct union_find_t {
+    size_t* items;
+    size_t* parrents;
+    size_t* rank;
+    size_t n_items;
+    size_t n_trees;
+};
+\end{lstlisting}
+
+Cette structure est composée de 3 tableaux:
+\begin{itemize}
+\item \textbf{items[n] :} Indices dans la grille du labyrinthe (n).
+\item \textbf{parents[n] :} Parent direct de l'item n.
+\item \textbf{rank[n] :} Rang de l'item n
+\end{itemize}
+Deux autres variables sont définies dans la structure:
+\begin{itemize}
+\item \textbf{n\_items :} Nombre total d'éléments.
+\item \textbf{n\_trees :} Nombre d'ensembles.
+\end{itemize}
+	\subsection{Complexités en temps de ufUnion et ufFind}
+		\subsubsection{Tree}
+		\paragraph{Find}
+		theta(Q)=c=1		
+		\paragraph{Union}
+		theta(Q)=c=1
+	\subsection{Implémentation de la structure du labyrinthe}
+	\subsection{Pseudo-code des fonctions mzCreate et MzIsValid}
+	\subsection{Analyse de la complexité en temps de MzCreate et MzIsValid}
+		\subsubsection{Implémentation à base de listes chainées}
+		\subsubsection{Implémentation à base d'arbres}
+			\paragraph{Find}		
+		Find d'un élément prends un temps proportionnel à la hauteur de l'arbre la première fois. Avec l'amélioration \textit{Compression de chemin} la hauteur de cet élément et de ces parents est ramenée à 1, ce qui garantit un temps constant pour chaque élément teta(n)=n.
 
 \section{Analyse empirique}
+
+A FAIRE
 \end{document}
