@@ -47,12 +47,12 @@
 	\begin{center}
 		\vfill
 		\textbf{
-		\Huge{INFOXXXX - Cours}}\\
+		\Huge{INFO2050-1 - Programmation Avancée}}\\
 		\bigskip
-		\huge{Titre}\\
+		\huge{Projet 2: Structures de Données}\\
 		\bigskip %saut de ligne
 		\smallskip
-		\Large{Collaborateur0\\Collaborateur1\\Collaborateur2} \\
+		\Large{Aliaksei Mazurchyk\\Antoine Sadzot}\\
 		\bigskip
 		\smallskip
 		\large{\today}\\%date
@@ -174,10 +174,15 @@ Le pointeur "first" pointe vers le premier élément de la liste chainée liée 
 \end{codebox}
 Dans tous les cas, sa complexité est theta(1).
 
+
+
 \item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est theta($N^{2}$) car chaque cellule est visitée une à une. A la la ligne 5, ($N^{2}$) itérations sont nécessaires car toutes les cellules sont visitées. Donc theta($N^{2}$).
+
 A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc theta($N^{2}$).
-La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. \\
-\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de Omega($N^{2}$).
+La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. 
+
+\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de Omega($N^{2}$). 
+
 \textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 opérations de connexion de cellules. Donc seule la ligne 11 aura une complexité variable. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments à $N^{2}$ ensemble d'un éléments :
 \begin{equation}
 	T(1) = 0
@@ -195,15 +200,9 @@ On observe que la complexité en temps du pire et du meilleur cas sont très pro
 
 \subsubsection{Implémentation à base d'arbres}
 La structure en C est la suivante:
-	\begin{lstlisting}[style=CStyle]
-struct union_find_t {
-    size_t* items;
-    size_t* parrents;
-    size_t* rank;
-    size_t n_items;
-    size_t n_trees;
-};
-\end{lstlisting}
+%	\begin{lstlisting}[style=CStyle]
+
+%\end{lstlisting}
 
 Cette structure est composée de 3 tableaux:
 \begin{itemize}
