@@ -167,22 +167,22 @@ Le pointeur "first" pointe vers le premier élément de la liste chainée liée 
 \end{codebox}
 Dans tous les cas, sa complexité est theta(1).
 
-\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. La ligne 3 est theta($N^{2}$) car chaque cellule est visitée une à une. La ligne 5 nécessite ($N^{2}$) itérations car toutes les cellules sont visitées. Donc theta($N^{2}$).
-A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc theta(2$N^{2}$).
-C'est la boucle à la ligne 8 qui va déterminer le meilleur et le pire cas. \\
-\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations. A la ligne 11, le meilleur cas correspond à la connexion d'une seule cellule à la fois. La complexité est donc propotionnelle au nombre d'itérations de la boucle.  Donc une complexité theta(N).
-Il y aura donc au total $N^{2}$-1 appels aux fonctions MzIsWallClosed et MzSetWall pour lesquelles, dans le meilleur cas, les élements de la structure myWalls sont ordonnés sur les N premières positions.
-Cela fait donc un nombre d'opérations : \\
+\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est theta($N^{2}$) car chaque cellule est visitée une à une. A la la ligne 5, ($N^{2}$) itérations sont nécessaires car toutes les cellules sont visitées. Donc theta($N^{2}$).
+A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc theta($N^{2}$).
+La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. \\
+\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de Omega($N^{2}$).
+\textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 opérations de connexion de cellules. Donc seule la ligne 11 aura une complexité variable. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments à $N^{2}$ ensemble d'un éléments :
 \begin{equation}
- 2 * \sum\limits_{i=1}^{N^{2}-1} i = N^{4} - 3N^{2}
+	T(1) = 0
+	T(m^{2}) = \frac{N^{2}}{2} + T(\frac{m^{2}}{2} pour m = N
 \end{equation}
-\\Ce qui donne une complexité theta($N^{4}$) pour les lignes 13 et 14. \textbf{Dans le meilleur cas}, la complexité est theta($N^{4}$)
-\textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Les lignes 9, 10, 12 et 15 cumulent donc chacune une complexité theta{$N^{2}$}. Il n'y a cependant toujours que $N^{2}$-1 opérations. Mais pour les lignes 13 et 14, le pire cas correspond au cas où les murs visités sont à la fin du tableau. Cela fait un nombre d'opérations :
+Par Plug-and-Chug, on obtient la solution suivante :
 \begin{equation}
- 2 * \sum\limits_{i=N^{2}-2N-1}^{2N^{2}-2N} i = 2 * ((\sum\limits_{i=1}^{2N^{2}-2N} i) - (\sum\limits_{i=1}^{N^{2}-2N -1} i)) = 3N^{4} - 4N^{3} - N^{2} - 4N -2
+	log_{2} (N^{2}) * \frac{N^{2}}{2}
 \end{equation}
-Ce qui donne pour ces deux lignes une complexité theta($3N^{4}$). Pour la ligne 11, toutes les itérations qui ne provoquent pas de connexion sont de complexité 1 et donc sont négligeables. Les $N^{2}$ -1 autres sont à prendre en compte. Cependant, leur complexité est inférieure à la complexité pour l'ouverture du maze.
-\textbf{Dans le pire cas, la complexité est $3N^{4}$}
+Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité totale.
+\textbf{Dans le pire cas}, la complexité est de l'ordre de Omega($log_{2}$ ($N^{2}$)*$N^{2}$)
+On observe que la complexité en temps du pire et du meilleur cas sont très proches.
 \end{description}
 
 
