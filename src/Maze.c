@@ -135,12 +135,18 @@ void mzSetWall(Maze* maze, Coord cell1, Coord cell2, bool close)
         indexArray = indexCell1 - indexCell1/maze->size;
    } 
    else
-    indexArray = indexCell1 + maze->number_inner_walls/2;
+   {
+       indexArray = indexCell1 + maze->number_inner_walls/2;
+   }
 
-    if (close == false)
-        maze->myWalls[indexArray].wall_between = false;
-    else
-        maze->myWalls[indexArray].wall_between = true;
+   if (close == false)
+   {
+       maze->myWalls[indexArray].wall_between = false;
+   }
+   else
+   {
+       maze->myWalls[indexArray].wall_between = true;
+   }
 
 }
 

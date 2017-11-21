@@ -16,6 +16,36 @@
 \usepackage{eurosym}
 \usepackage{amsmath} 
 \usepackage{float}
+
+%Définition du c pour les "listings"
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{mGreen}{rgb}{0,0.6,0}
+\definecolor{mGray}{rgb}{0.5,0.5,0.5}
+\definecolor{mPurple}{rgb}{0.58,0,0.82}
+\definecolor{backgroundColour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C
+}
+
+
 %\usepackage[french,onelanguage,ruled,vlined]{algorithm2e}
 %\usepackage{clrscode3e}
 %\usepackage{algorithm, algpseudocode}
@@ -65,8 +95,7 @@
 
 \section{Analyse Théorique}
 \subsection{Variante d'union-find à base d'arbres choisie}
-	La version de l'union-find en arbre implémentée est une amélioration poussée de la version en arbre classique. Comme dans la version de base chaque élément pointe vers son parent.
-	Lors d'une union de sous-ensembles, les racines des deux arbres sont fusionnés, un parent se retrouve donc avec deux enfants.
+	La version de l'union-find en arbre implémentée est une version améliorée. Comme dans la version de base chaque élément pointe vers son parent. Lors d'une union de sous-ensembles, les racines des deux arbres sont fusionnés, un parent se retrouve donc avec deux enfants.
 	
 	\paragraph{Rang}			
 	La première amélioration consiste à associer un rang a chaque élément. Cela permet d'optimiser la fusion. L'union-find de base pouvait être fort déséquilibré, ce qui rendais l'appel Find() assez long. L'ajout d'un rang permet d'équilibrer l'arbre lors de l'union. 
@@ -81,54 +110,87 @@
 \subsubsection{Implémentation à base de listes chainées}
 
 \begin{description}
-\item[ufFind :] Dans tous les cas, la complexité est theta(1)
-\item[ufUnion :] Dans le meilleur cas, le plus petit ensemble à lier à la suite du second ensemble ne contient qu'un élément. La complexité dans le meilleur cas est donc theta(1). Dans le pire cas, l'ensemble à lier à la suite du second ensemble est de taille N/2, N étant le nombre d'éléments du labyrinthe. La complexité dans le pire cas est donc theta(N/2).
+\item[ufFind :] Dans tous les cas, la complexité est $\Theta(1)$
+\item[ufUnion :] Dans le meilleur cas, le plus petit ensemble à lier à la suite du second ensemble ne contient qu'un élément. La complexité dans le meilleur cas est donc $\Theta(1)$. Dans le pire cas, l'ensemble à lier à la suite du second ensemble est de taille N/2, N étant le nombre d'éléments du labyrinthe. La complexité dans le pire cas est donc $\Theta(N/2)$.
 \end{description}
 \subsubsection{Implémentation à base d'arbres}
-
-
+\begin{description}
+\item[ufFind :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\Theta(n + log(n))$. 
+\item[ufUnion :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\Theta(n + log(n))$.
+\item[Complexité combinée:] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire elle est $\Omega( \alpha(n))$, ce qui équivaut à un temps constant car $\alpha(n)$ (inverse de la fonction d'Ackermann) a une croissance extrêmement lente: $\alpha(2^{65536}) = 5$.
+\end{description}
 \subsection{Implémentation de la structure du labyrinthe}
-Les données du labyrinthe sont stockées dans la structure Maze. \\
-struct maze\_t \{ \\
-\quad    UnionFind *union\_Find; \\
-\quad     struct Walls *myWalls; \\
-\quad     size\_t size; \\
-\quad     size\_t number\_inner\_walls; \\
-\};\\
+Les données du labyrinthe sont stockées dans la structure Maze.
+\begin{lstlisting}[style=CStyle]
+struct maze_t {
+    UnionFind *union_Find;
+     struct Walls *myWalls;
+     size_t size;
+     size_t number_inner_walls;
+};
+\end{lstlisting}
 
-La structure "maze\_t" contient la structure "UnionFind", qui sera décrite pour chaque implémentation par la suite. Elle contient également la structure "Walls" qui est un vecteur enregistrant tous les murs internes du labyrinthe. La variable "size" contient la taille du labyrinthe. La variable "number\_inner\_walls" contient le nombre de mur internes du labyrinthe. C'est également la taille du vecteur de type "Walls". \\
-\linebreak
-typedef struct Walls \{ \\
-    Coord Cell1; \\
-    Coord Cell2; \\
-    bool wall\_between; \\
-\};\\
-
-La structure "Walls" contient les coordonnées de deux cellules adjacentes, partageant un mur. La variable booléenne "wall" vaut "true" si le mur est présent. Elle vaut "false" si le mur est absent.\\
+La structure "maze\_t" contient la structure "UnionFind", qui sera décrite pour chaque implémentation par la suite. Elle contient également la structure "Walls" qui est un vecteur enregistrant tous les murs internes du labyrinthe. La variable "size" contient la taille du labyrinthe. La variable "number\_inner\_walls" contient le nombre de mur internes du labyrinthe. C'est également la taille du vecteur de type "Walls".
+\begin{lstlisting}[style=CStyle]
+typedef struct Walls {
+    Coord Cell1;
+    Coord Cell2;
+    bool wall_between;
+};
+\end{lstlisting}
+La structure "Walls" contient les coordonnées de deux cellules adjacentes, partageant un mur. La variable booléenne "wall" vaut "true" si le mur est présent. Elle vaut "false" si le mur est absent.
 
 \subsubsection{Implementation par listes chainées}
-La structure union\_find\_t est décrite de cette manière : \\ \\
-struct union\_find\_t \{ \\
-    struct Element* elements; \\
-    struct Sentinel* sentinels; \\
-    size\_t numberComponents; \\
-\}; \\ \\
-Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments de chaque liste chainée. La variable "numberComponents" contient le nombre d'ensembles distincts. \\ \\
-typedef struct Element \{\\
-    size\_t numero;\\
-    struct Sentinel* head;\\
-    struct Element* next;\\
-\}Element;\\ \\
-Le "numero" correspond à l'indice de l'élément dans le labyrinthe. Le pointeur "head" pointe vers la sentinelle de l'ensemble auquel appartient l'élément. Le pointeur "next" pointe vers l'élement suivant dans la liste chainée.\\
-\\
-typedef struct Sentinel \{ \\
-    struct Element* first; \\
-    struct Element* last; \\
-    size\_t numberElements; \\
-\}Sentinel;\\ \\
+La structure union\_find\_t est décrite de cette manière :
+\begin{lstlisting}[style=CStyle]
+struct union_find_t {
+    struct Element* elements;
+    struct Sentinel* sentinels;
+    size_t numberComponents;
+};
+\end{lstlisting}
+Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments de chaque liste chainée. La variable "numberComponents" contient le nombre d'ensembles distincts.
+\begin{lstlisting}[style=CStyle]
+typedef struct Element {
+    size_t numero;
+    struct Sentinel* head;
+    struct Element* next;
+}Element;
+\end{lstlisting}
+Le "numero" correspond à l'indice de l'élément dans le labyrinthe. Le pointeur "head" pointe vers la sentinelle de l'ensemble auquel appartient l'élément. Le pointeur "next" pointe vers l'élement suivant dans la liste chainée.
+	\begin{lstlisting}[style=CStyle]
+typedef struct Sentinel {
+    struct Element* first;
+    struct Element* last;
+    size_t numberElements;
+}Sentinel;
+\end{lstlisting}
 Le pointeur "first" pointe vers le premier élément de la liste chainée liée à la sentinelle. Le pointeur "last" pointe vers le dernier élément de cette liste. La variable "numberElements" contient le nombre d'éléments présents dans cette liste.
-\subsubsection{Implementation par arbres}
+\subsubsection{Implémentation par arbres}
 
+La structure union\_find\_t est déclarée ainsi:
+\begin{lstlisting}[style=CStyle]
+struct union_find_t {
+    size_t* items;
+    size_t* parrents;
+    size_t* rank;
+    size_t n_items;
+    size_t n_trees;
+};
+\end{lstlisting}
+Cette structure est composée de 3 tableaux:
+\begin{itemize}
+\item \textbf{items[n] :} Indices dans la grille du labyrinthe.
+\item \textbf{parents[n] :} Parent direct de l'item située à l'indice \emph{n}.
+\item \textbf{rank[n] :} Rang de l'item de l'item située à l'indice \emph{n}
+\end{itemize}
+Deux autres variables sont définies:
+\begin{itemize}
+\item \textbf{n\_items :} Nombre total d'éléments.
+\item \textbf{n\_trees :} Nombre d'ensembles.
+\end{itemize}
+ 
+ Cette structure simplifie grandement le parcourt des ensembles disjoints, les pointeurs étant masqués derrière des tableaux.
  
 
 \subsection{Pseudocode des fonctions mzCreate et MzIsValid}
@@ -186,7 +248,7 @@ La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas.
 \textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 opérations de connexion de cellules. Donc seule la ligne 11 aura une complexité variable. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments à $N^{2}$ ensemble d'un éléments :
 \begin{equation}
 	T(1) = 0
-	T(m^{2}) = \frac{N^{2}}{2} + T(\frac{m^{2}}{2} pour m = N
+	T(m^{2}) = \frac{N^{2}}{2} + T(\frac{m^{2}}{2}) $ pour $ m = N
 \end{equation}
 Par Plug-and-Chug, on obtient la solution suivante :
 \begin{equation}
@@ -196,39 +258,6 @@ Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité
 \textbf{Dans le pire cas}, la complexité est de l'ordre de Omega($log_{2}$ ($N^{2}$)*$N^{2}$)
 On observe que la complexité en temps du pire et du meilleur cas sont très proches.
 \end{description}
-
-
-\subsubsection{Implémentation à base d'arbres}
-La structure en C est la suivante:
-%	\begin{lstlisting}[style=CStyle]
-
-%\end{lstlisting}
-
-Cette structure est composée de 3 tableaux:
-\begin{itemize}
-\item \textbf{items[n] :} Indices dans la grille du labyrinthe (n).
-\item \textbf{parents[n] :} Parent direct de l'item n.
-\item \textbf{rank[n] :} Rang de l'item n
-\end{itemize}
-Deux autres variables sont définies dans la structure:
-\begin{itemize}
-\item \textbf{n\_items :} Nombre total d'éléments.
-\item \textbf{n\_trees :} Nombre d'ensembles.
-\end{itemize}
-	\subsection{Complexités en temps de ufUnion et ufFind}
-		\subsubsection{Tree}
-		\paragraph{Find}
-		theta(Q)=c=1		
-		\paragraph{Union}
-		theta(Q)=c=1
-	\subsection{Implémentation de la structure du labyrinthe}
-	\subsection{Pseudo-code des fonctions mzCreate et MzIsValid}
-	\subsection{Analyse de la complexité en temps de MzCreate et MzIsValid}
-		\subsubsection{Implémentation à base de listes chainées}
-		\subsubsection{Implémentation à base d'arbres}
-			\paragraph{Find}		
-		Find d'un élément prends un temps proportionnel à la hauteur de l'arbre la première fois. Avec l'amélioration \textit{Compression de chemin} la hauteur de cet élément et de ces parents est ramenée à 1, ce qui garantit un temps constant pour chaque élément teta(n)=n.
-
 \section{Analyse empirique}
 
 A FAIRE
