@@ -140,7 +140,7 @@ typedef struct Walls {
 \end{lstlisting}
 La structure "Walls" contient les coordonnées de deux cellules adjacentes, partageant un mur. La variable booléenne "wall" vaut "true" si le mur est présent. Elle vaut "false" si le mur est absent.
 
-\subsubsection{Implementation par listes chainées}
+\subsubsection{Implémentation par listes chainées}
 La structure union\_find\_t est décrite de cette manière :
 \begin{lstlisting}[style=CStyle]
 struct union_find_t {
@@ -259,6 +259,15 @@ Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité
 On observe que la complexité en temps du pire et du meilleur cas sont très proches.
 \end{description}
 \section{Analyse empirique}
-
-A FAIRE
+\subsection{Tests de performance}
+\begin{figure}[h]
+ 	\caption{\label{list} List}
+	\includegraphics[scale=1]{Tree_graph.jpg}
+\end{figure}
+\begin{figure}[h]
+ 	\caption{\label{tree} Tree}
+	\includegraphics[scale=1]{Tree_graph.jpg}
+\end{figure}
+%Dans la figure~\ref{étiquette}
+\subsection{Analyse des résultats}
 \end{document}
