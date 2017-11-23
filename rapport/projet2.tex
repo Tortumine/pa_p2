@@ -235,16 +235,16 @@ Deux autres variables sont définies:
 \Procname{$ufComponentsCount(union_Find)$}
 \li \Return $union_Find->numberComponents$
 \end{codebox}
-Dans tous les cas, sa complexité est theta(1).
+Dans tous les cas, sa complexité est $\Theta(1)$.
 
 
 
-\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est theta($N^{2}$) car chaque cellule est visitée une à une. A la la ligne 5, ($N^{2}$) itérations sont nécessaires car toutes les cellules sont visitées. Donc theta($N^{2}$).
+\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est $\Theta(N^{2})$ car chaque cellule est visitée une à une. A la la ligne 5, ($N^{2}$) itérations sont nécessaires car toutes les cellules sont visitées. Donc theta($N^{2}$).
 
-A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc theta($N^{2}$).
+A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc $\Theta(N^{2})$.
 La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. 
 
-\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de Omega($N^{2}$). 
+\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de $\Omega(N^{2})$. 
 
 \textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 opérations de connexion de cellules. Donc seule la ligne 11 aura une complexité variable. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments à $N^{2}$ ensemble d'un éléments :
 \begin{equation}
@@ -256,8 +256,8 @@ Par Plug-and-Chug, on obtient la solution suivante :
 	log_{2} (N^{2}) * \frac{N^{2}}{2}
 \end{equation}
 Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité totale.
-\textbf{Dans le pire cas}, la complexité est de l'ordre de Omega($log_{2}$ ($N^{2}$)*$N^{2}$)
-On observe que la complexité en temps du pire et du meilleur cas sont très proches.
+\textbf{Dans le pire cas}, la complexité est de l'ordre de $\Omega(log_{2} (N^{2})*N^{2})$
+On observe que la complexité en temps du pire et du meilleur cas sont très proches, à un multiple de $N^{2}$ près.
 \end{description}
 \newpage 
 \section{Analyse empirique}
@@ -292,7 +292,7 @@ On observe que la complexité en temps du pire et du meilleur cas sont très pro
 \subsection{Analyse des résultats}
 La figure \ref{list} montre que le temps de calcul croit très rapidement avec le carré de de la taille du labyrinthe. Ceci semble concorder avec les analyses théoriques combinées de l'\emph{unionFindList} et de \emph{mzCreate}.
 
-Sur la figure \ref{tree} on peut remarquer que l'implémentation de \emph{unionFindTree} croit très lentement, presque linéairement à partir de la taille 800. Des test plus nombreux furent réalisés ce qui donna la figure \ref{treebig}. On y voit que la courbe croit très lentement. Ceci concorde avec l'étude réalisée par Fredman et Saks. La temps dédié a Union-Find est presque constant.
+Sur la figure \ref{tree} on peut remarquer que l'implémentation de \emph{unionFindTree} croit très lentement, presque linéairement à partir de la taille 800. Des test plus nombreux furent réalisés ce qui donna la figure \ref{treebig}. On y voit que la courbe croit très lentement. Ceci concorde avec l'étude réalisée par Fredman et Saks. Le temps dédié a Union-Find est presque constant.
 
 La comparaison entre l'implémentation \emph{List} et \emph{Tree} illustrée par la figure \ref{listtree} montre que la structure en arbre est bien plus performante. Pour un tableau de taille $1000$, $10^{6}$ éléments sont gérés par l'Union-Find. La génération du labyrinthe en utilisant la structure en liste nécessite 160 secondes, alors que celle en arbre ne prend que 0.6 secondes. Ceci est principalement dû aux améliorations implémentées à la structure en arbre (rang et compression de chemin).
 \end{document}
