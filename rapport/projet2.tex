@@ -266,25 +266,33 @@ On observe que la complexité en temps du pire et du meilleur cas sont très pro
   \centering
   \begin{minipage}[h]{0.4\textwidth}
   \caption{List}
-    \includegraphics[width=\textwidth]{Tree_graph.jpg}    
+    \includegraphics[width=\textwidth]{List_graph.jpg}
+  \label{list}  
   \end{minipage}
   \hfill
   \begin{minipage}[h]{0.4\textwidth}
   \caption{Tree}
     \includegraphics[width=\textwidth]{Tree_graph.jpg}
+  \label{tree}
   \end{minipage}
-  \begin{minipage}[h]{0.4\textwidth}
+  \begin{minipage}[h]{0.4\textwidth} 
   \caption{List et Tree}
-    \includegraphics[width=\textwidth]{Tree_graph.jpg}    
+    \includegraphics[width=\textwidth]{List_Tree_graph.jpg} 
+  \label{listtree}   
   \end{minipage}
   \hfill
   \begin{minipage}[h]{0.4\textwidth}
   \caption{Tree grande taille}
-    \includegraphics[width=\textwidth]{Tree_graph.jpg}
+    \includegraphics[width=\textwidth]{Tree_big_graph.jpg}
+  \label{treebig}
   \end{minipage}
 \end{figure}
 
 %Dans la figure~\ref{étiquette}
 \subsection{Analyse des résultats}
-Comme on peut le remarquer sur la figure 2, l'implémentation de la de la structure en arbre a une croissance très lente et qui devient linéaire au delà de la taille 800 (figure 4) . Si on prends en compte que ne nombre d'élément géré par l'union find croit avec le carré de la taille du labyrinthe. La complexité presque linéaire est vérifié
+La figure \ref{list} montre que le temps de calcul croit très rapidement avec le carré de de la taille du labyrinthe. Ceci semble concorder avec les analyses théoriques combinées de l'\emph{unionFindList} et de \emph{mzCreate}.
+
+Sur la figure \ref{tree} on peut remarquer que l'implémentation de \emph{unionFindTree} croit très lentement, presque linéairement à partir de la taille 800. Des test plus nombreux furent réalisés ce qui donna la figure \ref{treebig}. On y voit que la courbe croit très lentement. Ceci concorde avec l'étude réalisée par Fredman et Saks. La temps dédié a Union-Find est presque constant.
+
+La comparaison entre l'implémentation \emph{List} et \emph{Tree} illustrée par la figure \ref{listtree} montre que la structure en arbre est bien plus performante. Pour un tableau de taille $1000$, $10^{6}$ éléments sont gérés par l'Union-Find. La génération du labyrinthe en utilisant la structure en liste nécessite 160 secondes, alors que celle en arbre ne prend que 0.6 secondes. Ceci est principalement dû aux améliorations implémentées à la structure en arbre (rang et compression de chemin).
 \end{document}
