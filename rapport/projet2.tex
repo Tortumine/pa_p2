@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[10pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage[francais]{babel}
 \usepackage{array}
@@ -204,23 +204,26 @@ Deux autres variables sont définies:
 \li 		\Return $true;$
 \end{codebox}
 
+Par soucis de simplicité, certaines séquences d'instructions évidentes ont été simplifiées en appels de fonctions. Comme par exemple l'initialisation des murs.
+
 \begin{codebox}
 \Procname {$mzCreate(size)$}
 	\li $innerWalls \gets \proc{NumberInnerWalls}(size)$
 	\li $myMaze->size = size$
 	\li $myMaze->union_find \gets \proc{ufCreate}(size * size)$
 	\li $myMaze->number\_inner\_walls \gets innerWalls$
-	\li $\proc{SetUpWalls}(myMaze->myWalls, size*size)$
-	\li $\proc{ShuffleWalls}(myMaze->myWalls, myMaze->number\_inner\_walls)$	
+	\li $\proc{InitializeWalls}(myMaze->myWalls, size*size)$
+	\li $parcours = \proc{SetUpParcoursOrder}(myMaze->number\_inner\_walls)$	
 	\li $wallsToTest \gets 0$	
 	\li \While $!\proc{mzIsValid}(myMaze) \&\& wallsToTest < innerWalls$
-	\li \Do $indexCell1 \gets \proc{IndexFromCoord}(myMaze->myWalls[wallsToTest].Cell1)$
-	\li 	$indexCell2 \gets \proc{IndexFromCoord}(myMaze->myWalls[wallsToTest].Cell2)$
+	\li $visits \gets parcours[wallsToTest]$
+	\li \Do $indexCell1 \gets \proc{IndexFromCoord}(myMaze->myWalls[visits].Cell1)$
+	\li 	$indexCell2 \gets \proc{IndexFromCoord}(myMaze->myWalls[visits].Cell2)$
 	\li 	$status \gets \proc{ufUnion}(myMaze->union\_Find, indexCell1, indexCell2)$
 	\li 	\If $status == UF\_MERGED$
 			\Then
-	\li 		$close \gets \proc{mzIsWallClosed}(myMaze, myMaze->myWalls[wallsToTest].Cell1,$ \\$myMaze->myWalls[wallsToTest].Cell2)$
-	\li 		$\proc{mzSetWall}(myMaze, myMaze->myWalls[wallsToTest].Cell1,$ \\ $ myMaze->myWalls[wallsToTest].Cell2, close)$
+	\li 		$close \gets \proc{mzIsWallClosed}(myMaze, myMaze->myWalls[visits].Cell1,$ \\$myMaze->myWalls[visits].Cell2)$
+	\li 		$\proc{mzSetWall}(myMaze, myMaze->myWalls[visits].Cell1,$ \\ $ myMaze->myWalls[visits].Cell2, close)$
 			\End
 	\li $wallsToTest++$	
 		\End
