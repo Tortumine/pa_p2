@@ -242,7 +242,7 @@ Dans tous les cas, sa complexité est $\Theta(1)$.
 
 
 
-\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est $\Theta(N^{2})$ car chaque cellule est visitée une à une. A la la ligne 5, ($N^{2}$) itérations sont nécessaires car toutes les cellules sont visitées. Donc theta($N^{2}$).
+\item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est $\Theta(N^{2})$ car chaque cellule est visitée une à une. A la la ligne 5, $N^{2}$ itérations sont nécessaires car toutes les cellules sont visitées. Donc la complexité est $\Theta(N^{2})$.
 
 A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc $\Theta(N^{2})$.
 La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. 
@@ -258,9 +258,10 @@ Par Plug-and-Chug, on obtient la solution suivante :
 \begin{equation}
 	log_{2} (N^{2}) * \frac{N^{2}}{2}
 \end{equation}
+Ce qui est la complexité totale de la ligne 11.
 Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité totale.
 \textbf{Dans le pire cas}, la complexité est de l'ordre de $\Omega(log_{2} (N^{2})*N^{2})$
-On observe que la complexité en temps du pire et du meilleur cas sont très proches, à un multiple de $N^{2}$ près.
+On observe que la complexité en temps du pire et du meilleur cas sont proches, à un multiple de $N^{2}$ près.
 \end{description}
 \newpage 
 \section{Analyse empirique}
