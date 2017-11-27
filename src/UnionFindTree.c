@@ -83,6 +83,9 @@ void ufFree(UnionFind* union_find)
  * ------------------------------------------------------------------------- */
 ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 {
+    if(union_find==NULL)return(UF_ERROR);
+    if((union_find->n_items <= item1) || (union_find->n_items <= item2))return(UF_ERROR);
+    
     size_t root1 = ufFind(union_find,item1);
     size_t root2 = ufFind(union_find,item2);
 
