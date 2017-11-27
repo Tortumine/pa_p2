@@ -31,8 +31,14 @@ UnionFind * ufCreate(size_t n_items)
 {
     UnionFind * unionFind;
     unionFind = malloc(sizeof(UnionFind));
+    if(unionFind == NULL)
+        return (NULL);
     unionFind->elements = malloc(n_items * sizeof(*unionFind->elements));
+    if(unionFind == NULL)
+        return (NULL);
     unionFind->sentinels = malloc(n_items * sizeof(*unionFind->sentinels));
+    if(unionFind == NULL)
+        return (NULL);
     
     //At first N subsets of 1 elements and 1 sentinel are created. 
     //Corresponding elements and sentinels share the same array index.

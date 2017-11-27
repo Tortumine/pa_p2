@@ -28,10 +28,17 @@ UnionFind* ufCreate(size_t n_items)
 {
     // Memory allocation
     UnionFind* tmp = malloc(sizeof(UnionFind));
-
+    if(tmp == NULL)
+        return (NULL);
     tmp->items = malloc(n_items * sizeof(size_t));
+    if(tmp->items == NULL)
+        return (NULL);
     tmp->parrents = malloc(n_items * sizeof(size_t));
+    if(tmp->parrents == NULL)
+        return (NULL);
     tmp->rank = malloc(n_items * sizeof(size_t));
+    if(tmp->rank == NULL)
+        return (NULL);
     tmp->n_items = n_items;
     tmp->n_trees = n_items;
 
