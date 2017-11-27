@@ -116,9 +116,18 @@
 \end{description}
 \subsubsection{Implémentation à base d'arbres}
 \begin{description}
-\item[ufFind :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\Theta(n + log(n))$. 
-\item[ufUnion :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\Theta(n + log(n))$.
-\item[Complexité combinée:] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire elle est $\Omega( \alpha(n))$, ce qui équivaut à un temps constant car $\alpha(n)$ (inverse de la fonction d'Ackermann) a une croissance extrêmement lente: $\alpha(2^{65536}) = 5$.
+\item[ufFind :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\mathcal{O}(h)$, avec $h$ comme auteur de l'arbre. 
+\item[ufUnion :] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire est est $\mathcal{O}(n + log(n))$.
+\item[Complexité combinée:] Dans le meilleur des cas, la complexité est $\Theta(1)$. Dans le pire elle est $\Omega( \alpha(n))$, ce qui équivaut à un temps constant car $\alpha(n)$ (fonction d'Ackermann inversée) a une croissance extrêmement lente. En pratique: $\alpha(2^{65536}) = 5$ ce qui garanti une complexité $\Theta(5)$. Cette complexité vaut pour l'\emph{Union} et le \emph{Find}, car les deux améliorations sont complémentaire et l'un tire parti des améliorations de l'autre. Ceci fut démontré par Fredman et Saks en 1989.
+
+\paragraph{Sources} 
+\begin{itemize}
+\item[•] \url{en.wikipedia.org/wiki/Disjoint-set_data_structure}
+\item[•] \url{fr.slideshare.net/NikitaShpilevoy/algorithms-union-find}
+\item[•] \url{fr.slideshare.net/WeiLi73/time-complexity-of-union-find-55858534}
+\item[•] \url{github.com/emintham/Papers/blob/master/Fredman%2CSaks-%20The%20cell%20probe%20complexity%20of%20dynamic%20data%20structures.pdf}
+\end{itemize}
+
 \end{description}
 \subsection{Implémentation de la structure du labyrinthe}
 Les données du labyrinthe sont stockées dans la structure Maze.
@@ -295,8 +304,11 @@ On observe que la complexité en temps du pire et du meilleur cas sont proches, 
 %Dans la figure~\ref{étiquette}
 \subsection{Analyse des résultats}
 La figure \ref{list} montre que le temps de calcul croit très rapidement avec le carré de de la taille du labyrinthe. Ceci semble concorder avec les analyses théoriques combinées de l'\emph{unionFindList} et de \emph{mzCreate}.
+\\
 
-Sur la figure \ref{tree} on peut remarquer que l'implémentation de \emph{unionFindTree} croit très lentement, presque linéairement à partir de la taille 800. Des test plus nombreux furent réalisés ce qui donna la figure \ref{treebig}. On y voit que la courbe croit très lentement. Ceci concorde avec l'étude réalisée par Fredman et Saks. Le temps dédié a Union-Find est presque constant.
+Sur la figure \ref{tree} on peut remarquer que l'implémentation de \emph{unionFindTree} croit très lentement, presque linéairement à partir de la taille 800. Des test plus nombreux furent réalisés ce qui donna la figure \ref{treebig}. On y voit que la courbe croit très lentement. Le temps dédié aux opération Union et Find devant être constant en pratique (démontré en 1989 par Fredman et Saks), on peut supposer que la légère croissance vient des opérations de \emph{mzCreate}.
+\\
 
 La comparaison entre l'implémentation \emph{List} et \emph{Tree} illustrée par la figure \ref{listtree} montre que la structure en arbre est bien plus performante. Pour un tableau de taille $1000$, $10^{6}$ éléments sont gérés par l'Union-Find. La génération du labyrinthe en utilisant la structure en liste nécessite 160 secondes, alors que celle en arbre ne prend que 0.6 secondes. Ceci est principalement dû aux améliorations implémentées à la structure en arbre (rang et compression de chemin).
+
 \end{document}
