@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "Maze.h"
+#include "UnionFind.h"
 
 struct maze_t {
     UnionFind *union_Find;
@@ -108,7 +109,7 @@ bool mzIsValid(const Maze* maze)
         return false;
     else return true;
 }
-bool mzIsWallClosed(Maze* maze, Coord cell1, Coord cell2)
+bool mzIsWallClosed(const Maze* maze, Coord cell1, Coord cell2)
 {
    size_t indexCell1 = cell1.row * maze->size + cell1.col;
    size_t indexCell2 = cell2.row * maze->size + cell2.col;
