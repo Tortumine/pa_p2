@@ -5,8 +5,7 @@
 #ifndef _MAZE_H_
 #define _MAZE_H_
 
-#include "UnionFind.h"
-#include <stdbool.h>
+#include <stbool.h>
 #include <stdio.h>
 
 /* Opaque structure */
@@ -64,7 +63,7 @@ size_t mzSize(const Maze* maze);
  * RETURN
  * opened       True if the wall is opened, false otherwise
  * ------------------------------------------------------------------------- */
-bool mzIsWallClosed(Maze* maze, Coord cell1, Coord cell2);
+bool mzIsWallClosed(const Maze* maze, Coord cell1, Coord cell2);
 
 
 /* ------------------------------------------------------------------------- *
