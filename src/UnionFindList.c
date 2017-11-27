@@ -8,6 +8,7 @@ struct union_find_t {
     struct Element* elements;
     struct Sentinel* sentinels;
     size_t numberComponents;
+    size_t numberElements;
 };
 
 //Element is composed of a number and a pointer head to it's sentinel and 
@@ -52,6 +53,7 @@ UnionFind * ufCreate(size_t n_items)
         unionFind->sentinels[i].numberElements = 1;      
     }
     unionFind->numberComponents = n_items;
+    unionFind->numberElements = n_items;
     return unionFind;
 }
 
@@ -65,11 +67,15 @@ void ufFree(UnionFind* union_find)
 size_t ufFind(const UnionFind* union_find, size_t item)
 {
     //takes the numero of the head element pointed by the sentinel of the item transmited as argument.
+   if(item >= union_find->numberElements)
+    return 0;
     return union_find->elements[item].head->first->numero;
 }
 
 ufStatus ufUnion(UnionFind* union_find, size_t item1, size_t item2)
 {   
+    if((item1 >= union_find->numberElements) || (item2 >= union_find->numberElements))
+        return UF_ERROR;
     if (ufFind(union_find, item1) == ufFind(union_find, item2))
         return UF_SAME;
     else 
