@@ -137,10 +137,11 @@ struct maze_t {
      struct Walls *myWalls;
      size_t size;
      size_t number_inner_walls;
+     size_t number_open_walls;
 };
 \end{lstlisting}
 
-La structure "maze\_t" contient la structure "UnionFind", qui sera décrite pour chaque implémentation par la suite. Elle contient également la structure "Walls" qui est un vecteur enregistrant tous les murs internes du labyrinthe. La variable "size" contient la taille du labyrinthe. La variable "number\_inner\_walls" contient le nombre de mur internes du labyrinthe. C'est également la taille du vecteur de type "Walls".
+La structure "maze\_t" contient la structure "UnionFind", qui sera décrite pour chaque implémentation par la suite. Elle contient également la structure "Walls" qui est un vecteur enregistrant tous les murs internes du labyrinthe. La variable "size" contient la taille du labyrinthe. La variable "number\_inner\_walls" contient le nombre de mur internes du labyrinthe. C'est également la taille du vecteur de type "Walls". La variable "number\_open\_walls" contient le nombre de murs qui ont été ouverts. Elle est initialisée à zero au début du programme.
 \begin{lstlisting}[style=CStyle]
 typedef struct Walls {
     Coord Cell1;
@@ -157,9 +158,10 @@ struct union_find_t {
     struct Element* elements;
     struct Sentinel* sentinels;
     size_t numberComponents;
+    size_t numberElements;
 };
 \end{lstlisting}
-Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments de chaque liste chainée. La variable "numberComponents" contient le nombre d'ensembles distincts.
+Elle contient un vecteur "elements" contenant tous les élements du labyrinthe structurés en listes chainées. Elle contient également un vecteur "sentinels" contenant toutes les sentinelles pointant sur les premiers et derniers éléments de chaque liste chainée. La variable "numberComponents" contient le nombre d'ensembles distincts. La variable "numberElements" contient le nombre d'éléments dans le union\_find. Elle correspond au nombre de cellules du labyrinthe.
 \begin{lstlisting}[style=CStyle]
 typedef struct Element {
     size_t numero;
@@ -207,13 +209,12 @@ Deux autres variables sont définies:
 
 \begin{codebox}
 \Procname {$mzIsValid(maze)$}
-\li    \If $\proc{ufComponentsCount}(maze->union\_Find) > 1$
+\li    \If $(\proc{ufComponentsCount}(maze->union\_Find) > 1) || $
+\li$(maze->number\_open\_walls != (maze->size * maze->size - 1))$
 \li    \Then \Return $false;$
 \li    \Else 
 \li 		\Return $true;$
 \end{codebox}
-
-Par soucis de simplicité, certaines séquences d'instructions évidentes ont été simplifiées en appels de fonctions. Comme par exemple l'initialisation des murs.
 
 \begin{codebox}
 \Procname {$mzCreate(size)$}
@@ -228,16 +229,20 @@ Par soucis de simplicité, certaines séquences d'instructions évidentes ont é
 	\li $visits \gets parcours[wallsToTest]$
 	\li \Do $indexCell1 \gets \proc{IndexFromCoord}(myMaze->myWalls[visits].Cell1)$
 	\li 	$indexCell2 \gets \proc{IndexFromCoord}(myMaze->myWalls[visits].Cell2)$
-	\li 	$status \gets \proc{ufUnion}(myMaze->union\_Find, indexCell1, indexCell2)$
+	\li 		$close \gets \proc{mzIsWallClosed}(myMaze, myMaze->myWalls[visits].Cell1,$ \\$myMaze->myWalls[visits].Cell2)$	
 	\li 	\If $status == UF\_MERGED$
-			\Then
-	\li 		$close \gets \proc{mzIsWallClosed}(myMaze, myMaze->myWalls[visits].Cell1,$ \\$myMaze->myWalls[visits].Cell2)$
-	\li 		$\proc{mzSetWall}(myMaze, myMaze->myWalls[visits].Cell1,$ \\ $ myMaze->myWalls[visits].Cell2, close)$
+			\Then	
+	\li 	$\proc{mzSetWall}(myMaze, myMaze->myWalls[visits].Cell1,$ \\ $ myMaze->myWalls[visits].Cell2, close)$
+	\li 	$status \gets \proc{ufUnion}(myMaze->union\_Find, indexCell1, indexCell2)$
 			\End
 	\li $wallsToTest++$	
 		\End
+	\li $free(parcours);$	
 	\li \Return $myMaze$
 \end{codebox}
+
+Par soucis de concision, certaines séquences d'instructions évidentes ont été simplifiées par des appels de fonctions dans mzCreate. Comme par exemple l'initialisation de la structure "Walls". Note : Le vecteur "parcours" contient en éléments les indices des cellules du labyrinthe. Ces éléments sont mélangés. Le parcours de "parcours" donne l'ordre de visite des murs.
+
 \subsection{Analyse de la complexité en temps de mzCreate et mzIsValid}
 
 \subsubsection{Implémentation à base de listes chainées}
@@ -247,18 +252,16 @@ Par soucis de simplicité, certaines séquences d'instructions évidentes ont é
 \Procname{$ufComponentsCount(union_Find)$}
 \li \Return $union_Find->numberComponents$
 \end{codebox}
-Dans tous les cas, sa complexité est $\Theta(1)$.
-
-
+Dans tous les cas, sa complexité est constante et elle est O(N).
 
 \item[mzCreate :] Seules les parties de la fonction présentant une complexité égale ou supérieure à $N^{2}$ sont présentées. Les autres sont ignorées car négligeables. \textbf{Dans tous les cas.} La ligne 3 est $\Theta(N^{2})$ car chaque cellule est visitée une à une. A la la ligne 5, $N^{2}$ itérations sont nécessaires car toutes les cellules sont visitées. Donc la complexité est $\Theta(N^{2})$.
 
 A la ligne 6, chaque mur intérieur est visité, ce qui fait 2$N^{2}$ - 2N opérations, donc $\Theta(N^{2})$.
 La boucle à la ligne 8 va varier en fonction du meilleur et du pire cas. 
 
-\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 11 dans le meilleur des cas. Car à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps est de l'ordre de $\Omega(N^{2})$. 
+\textbf{Dans le meilleur cas}, chaque itération permet une connexion de cellules. Cela fait donc $N^{2}$-1 itérations nécessaires. Au sein de la boucle, toutes les instructions on une complexité linéaire. C'est également le cas pour la ligne 15. Car dans le meilleur cas, à chaque connexion d'ensembles, seul un élément est connecté à la fois. Donc,\textbf{ dans le meilleur cas}, la complexité en temps totale est de l'ordre de $\Omega(N^{2})$. 
 
-\textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 opérations de connexion de cellules. Donc seule la ligne 11 aura une complexité variable. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments à $N^{2}$ ensemble d'un éléments :
+\textbf{Dans le pire cas}, tous les éléments du vecteur myWalls sont visités. Cela fait donc 2$N^{2}$ - 2N  itérations. Il n'y aura cependant toujours que $N^{2}$-1 appels à ufUnion. Donc seule la ligne 15 aura une complexité variable. Les autres lignes présentant une complexité constante. L'analyse de la complexité du ufUnion va se faire pour les cas où N est une puissance de 2, par facilité. Le pire cas correspond à celui où les ensembles connectés sont toujours de taille égale. Au début, tous les ensembles seront de taille 1, puis de taille 2, 4, 8,... jusqu'à ce qu'il ne reste plus qu'un ensemble. En prenant le problème à l'envers, on part d'un ensemble de $N^{2}$ éléments pour arriver à $N^{2}$ ensembles d'un élément :
 \begin{equation}
 	T(1) = 0
 	T(m^{2}) = \frac{N^{2}}{2} + T(\frac{m^{2}}{2}) $ pour $ m = N
@@ -267,7 +270,7 @@ Par Plug-and-Chug, on obtient la solution suivante :
 \begin{equation}
 	log_{2} (N^{2}) * \frac{N^{2}}{2}
 \end{equation}
-Ce qui est la complexité totale de la ligne 11.
+Ce qui est la complexité totale de la ligne 11 pour les $N^{2}$-1 étapes de connexion.
 Le pire cas de la boucle qui démarre en ligne 8 influencera donc la complexité totale.
 \textbf{Dans le pire cas}, la complexité est de l'ordre de $\Omega(log_{2} (N^{2})*N^{2})$
 On observe que la complexité en temps du pire et du meilleur cas sont proches, à un multiple de $N^{2}$ près.
